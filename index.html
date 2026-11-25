@@ -2,7 +2,7 @@
 <html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
-    <!-- Configuración óptima para iPhone y prevención de zoom indeseado al tocar inputs -->
+    <!-- Configuración óptima para iPhone SE / iOS y prevención de zoom indeseado al tocar inputs -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <!-- Meta etiquetas Apple Web App para funcionar como App nativa al añadir a pantalla de inicio -->
@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-title" content="IronLog Gym">
     <meta name="theme-color" content="#09090b">
     
-    <title>IronLog - Registro de Entrenamiento</title>
+    <title>IronLog Gym v2.1 - Registro de Entrenamiento</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -59,7 +59,7 @@
             -webkit-tap-highlight-color: transparent;
             overscroll-behavior-y: none;
             padding-top: var(--sat);
-            padding-bottom: calc(84px + var(--sab));
+            padding-bottom: calc(88px + var(--sab));
         }
 
         /* Ocultar barras de desplazamiento manteniendo el scroll fluido */
@@ -81,7 +81,7 @@
             -moz-appearance: textfield;
         }
 
-        /* Animación suave para el temporizador */
+        /* Animación suave para el temporizador de descanso */
         @keyframes pulse-border {
             0%, 100% { border-color: rgba(16, 185, 129, 0.5); }
             50% { border-color: rgba(16, 185, 129, 1); }
@@ -152,37 +152,43 @@
     <!-- ===================================================================== -->
     <!-- VISTA 1: ENTRENAR (WORKOUT)                                           -->
     <!-- ===================================================================== -->
-    <main id="view-workout" class="max-w-lg mx-auto px-3.5 pt-3">
+    <main id="view-workout" class="max-w-lg mx-auto px-3 pt-3">
         
-        <!-- Cabecera compacta -->
-        <header class="flex items-center justify-between mb-3">
-            <div>
-                <div class="flex items-center gap-2">
-                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                    <h1 class="text-xl font-extrabold tracking-tight text-white">IronLog</h1>
+        <!-- Cabecera compacta adaptada a iPhone SE con etiqueta v2.1 y cronómetro manual -->
+        <header class="flex items-center justify-between gap-2 mb-3">
+            <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                    <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white truncate">IronLog Gym</h1>
+                    <span class="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">v2.1</span>
                 </div>
-                <p id="current-day-subtitle" class="text-xs text-zinc-400 font-medium mt-0.5">Día 1 • Pecho</p>
+                <p id="current-day-subtitle" class="text-[11px] text-zinc-400 font-medium mt-0.5 truncate">D1 • Pecho</p>
             </div>
             
-            <!-- Cronómetro de duración de sesión -->
-            <div class="flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-xl">
-                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span id="session-duration" class="text-xs font-mono font-bold text-zinc-200">00:00</span>
+            <!-- Cronómetro manual de sesión (Empezar / Pausar / Seguir / Reiniciar) -->
+            <div class="flex items-center gap-1 bg-zinc-900 border border-zinc-800 p-1 rounded-xl shrink-0">
+                <span id="session-duration" class="text-xs font-mono font-extrabold text-zinc-100 px-1.5">00:00</span>
+                <button id="session-toggle-btn" onclick="toggleSessionTimer()" class="px-2.5 py-1.5 rounded-lg bg-emerald-500 text-zinc-950 text-[11px] font-extrabold active:scale-95 transition">
+                    Empezar
+                </button>
+                <button onclick="resetSessionTimer()" class="p-1.5 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white active:scale-90 transition" title="Reiniciar cronómetro a 00:00">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </button>
             </div>
         </header>
 
-        <!-- Selector de Días (D1 a D7) con scroll horizontal suave -->
+        <!-- Selector de Días (D1 a D7+) con scroll horizontal suave -->
         <div id="day-tabs" class="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-3">
             <!-- Se renderiza dinámicamente por JS -->
         </div>
 
         <!-- Barra de resumen rápido del día -->
-        <div class="bg-zinc-900/90 border border-zinc-800/80 rounded-2xl p-3 mb-4 flex items-center justify-between">
-            <div>
-                <h2 id="day-title-banner" class="text-base font-bold text-white">Día 1: Pecho</h2>
+        <div class="bg-zinc-900/90 border border-zinc-800/80 rounded-2xl p-3 mb-4 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+                <h2 id="day-title-banner" class="text-sm sm:text-base font-bold text-white truncate">Día 1: Pecho</h2>
                 <p id="day-progress-text" class="text-xs text-zinc-400 mt-0.5">0 de 0 series completadas</p>
             </div>
-            <button onclick="openAddExerciseModal()" class="flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 text-emerald-400 text-xs font-bold px-3 py-2 rounded-xl border border-zinc-700/70 active:scale-95 transition">
+            <button onclick="openAddExerciseModal()" class="shrink-0 flex items-center gap-1 bg-zinc-800 hover:bg-zinc-700 text-emerald-400 text-xs font-bold px-3 py-2 rounded-xl border border-zinc-700/70 active:scale-95 transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                 <span>Ejercicio</span>
             </button>
@@ -206,25 +212,25 @@
     <!-- ===================================================================== -->
     <!-- VISTA 2: HISTORIAL                                                    -->
     <!-- ===================================================================== -->
-    <main id="view-history" class="max-w-lg mx-auto px-3.5 pt-3 hidden">
+    <main id="view-history" class="max-w-lg mx-auto px-3 pt-3 hidden">
         <header class="mb-4">
             <h1 class="text-xl font-extrabold tracking-tight text-white">Historial</h1>
             <p class="text-xs text-zinc-400">Tus sesiones completadas y volumen movido</p>
         </header>
 
         <!-- Tarjetas de Estadísticas Rápidas -->
-        <div class="grid grid-cols-3 gap-2.5 mb-5">
+        <div class="grid grid-cols-3 gap-2 mb-5">
             <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-center">
-                <span class="block text-[11px] font-semibold text-zinc-400 uppercase">Sesiones</span>
-                <span id="stat-total-workouts" class="text-xl font-extrabold text-white mt-0.5 block">0</span>
+                <span class="block text-[10px] font-semibold text-zinc-400 uppercase">Sesiones</span>
+                <span id="stat-total-workouts" class="text-lg font-extrabold text-white mt-0.5 block">0</span>
             </div>
             <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-center">
-                <span class="block text-[11px] font-semibold text-zinc-400 uppercase">Volumen Total</span>
-                <span id="stat-total-volume" class="text-xl font-extrabold text-emerald-400 mt-0.5 block">0 t</span>
+                <span class="block text-[10px] font-semibold text-zinc-400 uppercase">Volumen Tot.</span>
+                <span id="stat-total-volume" class="text-lg font-extrabold text-emerald-400 mt-0.5 block">0 t</span>
             </div>
             <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-center">
-                <span class="block text-[11px] font-semibold text-zinc-400 uppercase">Series Tot.</span>
-                <span id="stat-total-sets" class="text-xl font-extrabold text-amber-400 mt-0.5 block">0</span>
+                <span class="block text-[10px] font-semibold text-zinc-400 uppercase">Series Tot.</span>
+                <span id="stat-total-sets" class="text-lg font-extrabold text-amber-400 mt-0.5 block">0</span>
             </div>
         </div>
 
@@ -237,10 +243,10 @@
     <!-- ===================================================================== -->
     <!-- VISTA 3: AJUSTES / BACKUP / GUÍA IPHONE                               -->
     <!-- ===================================================================== -->
-    <main id="view-settings" class="max-w-lg mx-auto px-3.5 pt-3 hidden">
+    <main id="view-settings" class="max-w-lg mx-auto px-3 pt-3 hidden">
         <header class="mb-4">
             <h1 class="text-xl font-extrabold tracking-tight text-white">Ajustes y Copia</h1>
-            <p class="text-xs text-zinc-400">Gestión de datos y guía para iPhone</p>
+            <p class="text-xs text-zinc-400">Gestión de datos y guía para iPhone (v2.1)</p>
         </header>
 
         <div class="space-y-4 pb-8">
@@ -380,19 +386,16 @@
                 canvas.height = 180;
                 const ctx = canvas.getContext('2d');
 
-                // Fondo degradado oscuro
                 const grad = ctx.createLinearGradient(0, 0, 180, 180);
                 grad.addColorStop(0, '#18181b');
                 grad.addColorStop(1, '#09090b');
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, 180, 180);
 
-                // Borde sutil esmeralda
                 ctx.strokeStyle = '#10b981';
                 ctx.lineWidth = 6;
                 ctx.strokeRect(3, 3, 174, 174);
 
-                // Dibujo minimalista de mancuerna / barra
                 ctx.fillStyle = '#10b981';
                 ctx.beginPath();
                 ctx.roundRect(36, 56, 18, 68, 6);
@@ -792,16 +795,19 @@
             settings: {
                 defaultRestSeconds: 90
             },
-            activeDayIndex: 0,
-            sessionStartTime: Date.now()
+            activeDayIndex: 0
         };
 
-        // Variables de control para modales y temporizadores
+        // Variables del cronómetro manual de sesión
+        let sessionElapsedSeconds = 0;
+        let sessionRunning = false;
+        let sessionLastTick = null;
+
+        // Variables de control para modales y temporizador de descanso
         let editingExerciseId = null;
         let selectedInitialSets = 4;
         let confirmCallback = null;
 
-        // Variables del temporizador de descanso
         let restInterval = null;
         let restTotalSeconds = 90;
         let restRemainingSeconds = 90;
@@ -857,7 +863,71 @@
         }
 
         /**
-         * 4. RENDERIZADO DE LA INTERFAZ DE ENTRENAMIENTO
+         * 4. CRONÓMETRO MANUAL DE SESIÓN (EMPEZAR / PAUSAR / SEGUIR / REINICIAR)
+         */
+        function updateSessionClockUI() {
+            const mins = Math.floor(sessionElapsedSeconds / 60).toString().padStart(2, '0');
+            const secs = (sessionElapsedSeconds % 60).toString().padStart(2, '0');
+            const displayEl = document.getElementById('session-duration');
+            const btnEl = document.getElementById('session-toggle-btn');
+
+            if (displayEl) {
+                displayEl.textContent = `${mins}:${secs}`;
+            }
+
+            if (btnEl) {
+                if (sessionRunning) {
+                    btnEl.textContent = 'Pausar';
+                    btnEl.className = 'px-2.5 py-1.5 rounded-lg bg-amber-500 text-zinc-950 text-[11px] font-extrabold active:scale-95 transition';
+                } else if (sessionElapsedSeconds > 0) {
+                    btnEl.textContent = 'Seguir';
+                    btnEl.className = 'px-2.5 py-1.5 rounded-lg bg-emerald-500 text-zinc-950 text-[11px] font-extrabold active:scale-95 transition';
+                } else {
+                    btnEl.textContent = 'Empezar';
+                    btnEl.className = 'px-2.5 py-1.5 rounded-lg bg-emerald-500 text-zinc-950 text-[11px] font-extrabold active:scale-95 transition';
+                }
+            }
+        }
+
+        function toggleSessionTimer() {
+            if (sessionRunning) {
+                // Pausar cronómetro
+                sessionRunning = false;
+                sessionLastTick = null;
+                showToast('Cronómetro en pausa');
+            } else {
+                // Iniciar o reanudar cronómetro
+                sessionRunning = true;
+                sessionLastTick = Date.now();
+                showToast(sessionElapsedSeconds === 0 ? '¡Entrenamiento iniciado!' : 'Cronómetro reanudado');
+            }
+            updateSessionClockUI();
+        }
+
+        function resetSessionTimer() {
+            sessionRunning = false;
+            sessionElapsedSeconds = 0;
+            sessionLastTick = null;
+            updateSessionClockUI();
+            showToast('Cronómetro reiniciado a 00:00');
+        }
+
+        function startSessionClockLoop() {
+            setInterval(() => {
+                if (sessionRunning && sessionLastTick) {
+                    const now = Date.now();
+                    const deltaSec = Math.floor((now - sessionLastTick) / 1000);
+                    if (deltaSec >= 1) {
+                        sessionElapsedSeconds += deltaSec;
+                        sessionLastTick += deltaSec * 1000;
+                        updateSessionClockUI();
+                    }
+                }
+            }, 250);
+        }
+
+        /**
+         * 5. RENDERIZADO DE LA INTERFAZ DE ENTRENAMIENTO Y REORDENACIÓN
          */
         function renderDayTabs() {
             const container = document.getElementById('day-tabs');
@@ -867,7 +937,7 @@
                 const isActive = idx === appState.activeDayIndex;
                 const btn = document.createElement('button');
                 btn.onclick = () => selectDay(idx);
-                btn.className = `shrink-0 px-3.5 py-2 rounded-xl border transition-all flex flex-col items-center min-w-[68px] active:scale-95 ${
+                btn.className = `shrink-0 px-3.5 py-2 rounded-xl border transition-all flex flex-col items-center min-w-[66px] active:scale-95 ${
                     isActive
                         ? 'bg-emerald-500 border-emerald-400 text-zinc-950 shadow-md shadow-emerald-500/20'
                         : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700'
@@ -875,7 +945,7 @@
 
                 btn.innerHTML = `
                     <span class="text-xs font-extrabold tracking-tight">${day.shortName}</span>
-                    <span class="text-[10px] font-semibold truncate max-w-[64px] ${isActive ? 'text-zinc-900' : 'text-zinc-500'}">${day.focus}</span>
+                    <span class="text-[10px] font-semibold truncate max-w-[62px] ${isActive ? 'text-zinc-900' : 'text-zinc-500'}">${day.focus}</span>
                 `;
                 container.appendChild(btn);
             });
@@ -888,6 +958,23 @@
             renderWorkoutDay();
         }
 
+        /**
+         * Mueve un ejercicio hacia arriba (-1) o hacia abajo (+1) conservando todas sus series y datos
+         */
+        function moveExercise(index, direction) {
+            const day = appState.routine[appState.activeDayIndex];
+            const targetIndex = index + direction;
+
+            if (!day || targetIndex < 0 || targetIndex >= day.exercises.length) return;
+
+            const temp = day.exercises[index];
+            day.exercises[index] = day.exercises[targetIndex];
+            day.exercises[targetIndex] = temp;
+
+            saveRoutine();
+            renderWorkoutDay();
+        }
+
         function renderWorkoutDay() {
             const day = appState.routine[appState.activeDayIndex];
             if (!day) return;
@@ -895,7 +982,6 @@
             document.getElementById('current-day-subtitle').textContent = `${day.shortName} • ${day.focus}`;
             document.getElementById('day-title-banner').textContent = day.title;
 
-            // Calcular series completadas
             let totalSets = 0;
             let completedSets = 0;
             day.exercises.forEach(ex => {
@@ -925,7 +1011,9 @@
                 const card = document.createElement('div');
                 card.className = 'bg-zinc-900 border border-zinc-800/90 rounded-2xl overflow-hidden shadow-sm';
 
-                // Cabecera del ejercicio
+                const isFirst = exIndex === 0;
+                const isLast = exIndex === day.exercises.length - 1;
+
                 let setsHTML = '';
                 ex.sets.forEach((set, setIndex) => {
                     const prevText = (set.prevWeight || set.prevReps)
@@ -945,7 +1033,7 @@
 
                             <!-- Referencia Anterior -->
                             <div class="col-span-3 text-center">
-                                <span class="text-[11px] font-medium text-zinc-400 bg-zinc-900 px-1.5 py-1 rounded-lg block truncate">${prevText}</span>
+                                <span class="text-[11px] font-medium text-zinc-400 bg-zinc-900 px-1 py-1 rounded-lg block truncate">${prevText}</span>
                             </div>
 
                             <!-- Input Peso (kg) -->
@@ -982,16 +1070,28 @@
                 });
 
                 card.innerHTML = `
-                    <div class="p-3.5 border-b border-zinc-800/80 flex items-start justify-between gap-2">
-                        <div>
-                            <h3 class="text-base font-bold text-white leading-snug">${ex.name}</h3>
-                            ${ex.notes ? `<p class="text-xs text-zinc-400 mt-0.5">${ex.notes}</p>` : ''}
+                    <div class="p-3 border-b border-zinc-800/80 flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <h3 class="text-sm sm:text-base font-bold text-white leading-snug">${ex.name}</h3>
+                            ${ex.notes ? `<p class="text-[11px] text-zinc-400 mt-0.5">${ex.notes}</p>` : ''}
                         </div>
                         <div class="flex items-center gap-1 shrink-0">
-                            <button onclick="openEditExerciseModal('${ex.id}')" class="p-2 text-zinc-400 hover:text-white rounded-lg bg-zinc-800/50 active:scale-90 transition" title="Editar ejercicio">
+                            <!-- Flechas de reordenar ejercicio -->
+                            <button onclick="moveExercise(${exIndex}, -1)" ${isFirst ? 'disabled' : ''}
+                                class="p-1.5 rounded-lg bg-zinc-800/70 transition ${isFirst ? 'text-zinc-700 opacity-40 cursor-not-allowed' : 'text-zinc-300 hover:text-emerald-400 active:scale-90'}"
+                                title="Subir ejercicio">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+                            </button>
+                            <button onclick="moveExercise(${exIndex}, 1)" ${isLast ? 'disabled' : ''}
+                                class="p-1.5 rounded-lg bg-zinc-800/70 transition ${isLast ? 'text-zinc-700 opacity-40 cursor-not-allowed' : 'text-zinc-300 hover:text-emerald-400 active:scale-90'}"
+                                title="Bajar ejercicio">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <!-- Editar y Eliminar -->
+                            <button onclick="openEditExerciseModal('${ex.id}')" class="p-1.5 text-zinc-400 hover:text-white rounded-lg bg-zinc-800/50 active:scale-90 transition" title="Editar ejercicio">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                             </button>
-                            <button onclick="confirmDeleteExercise('${ex.id}')" class="p-2 text-zinc-400 hover:text-red-400 rounded-lg bg-zinc-800/50 active:scale-90 transition" title="Eliminar ejercicio">
+                            <button onclick="confirmDeleteExercise('${ex.id}')" class="p-1.5 text-zinc-400 hover:text-red-400 rounded-lg bg-zinc-800/50 active:scale-90 transition" title="Eliminar ejercicio">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
                         </div>
@@ -1031,7 +1131,7 @@
         }
 
         /**
-         * 5. INTERACCIONES CON SERIES Y EJERCICIOS
+         * 6. INTERACCIONES CON SERIES Y EJERCICIOS
          */
         function updateSetField(exerciseId, setIndex, field, value) {
             const day = appState.routine[appState.activeDayIndex];
@@ -1050,12 +1150,10 @@
             const set = ex.sets[setIndex];
             set.completed = !set.completed;
 
-            // Si el usuario no escribió peso o reps pero marcó completado, autocompletar con el valor anterior
             if (set.completed) {
                 if (!set.weight && set.prevWeight) set.weight = set.prevWeight;
                 if (!set.reps && set.prevReps) set.reps = set.prevReps;
 
-                // Iniciar temporizador de descanso automáticamente
                 startRestTimer(appState.settings.defaultRestSeconds);
             }
 
@@ -1193,7 +1291,7 @@
         }
 
         /**
-         * 6. FINALIZAR Y GUARDAR ENTRENAMIENTO EN EL HISTORIAL
+         * 7. FINALIZAR Y GUARDAR ENTRENAMIENTO EN EL HISTORIAL
          */
         function finishWorkout() {
             const day = appState.routine[appState.activeDayIndex];
@@ -1226,8 +1324,9 @@
                 '¿Finalizar entrenamiento?',
                 `Se guardarán ${completedSetsCount} series (${totalVolume.toLocaleString('es-ES')} kg totales) y se actualizarán tus marcas para la próxima semana.`,
                 () => {
-                    const durationSeconds = Math.floor((Date.now() - appState.sessionStartTime) / 1000);
-                    const durationMins = Math.max(1, Math.round(durationSeconds / 60));
+                    const durationMins = sessionElapsedSeconds > 0
+                        ? Math.max(1, Math.round(sessionElapsedSeconds / 60))
+                        : 45;
 
                     const workoutRecord = {
                         id: 'w_' + Date.now(),
@@ -1240,11 +1339,9 @@
                         exercises: recordedExercises
                     };
 
-                    // Guardar en historial (más reciente primero)
                     appState.history.unshift(workoutRecord);
                     saveHistory();
 
-                    // Actualizar "Anterior" con los datos de hoy y reiniciar checks para la siguiente sesión
                     day.exercises.forEach(ex => {
                         ex.sets.forEach(s => {
                             if (s.completed) {
@@ -1259,7 +1356,7 @@
 
                     saveRoutine();
                     stopAndHideTimer();
-                    appState.sessionStartTime = Date.now();
+                    resetSessionTimer();
                     renderWorkoutDay();
                     showToast('¡Entrenamiento guardado con éxito!');
                 }
@@ -1267,7 +1364,7 @@
         }
 
         /**
-         * 7. TEMPORIZADOR DE DESCANSO CON SONIDO WEB AUDIO API
+         * 8. TEMPORIZADOR DE DESCANSO CON SONIDO WEB AUDIO API
          */
         function playBeepSound() {
             try {
@@ -1275,7 +1372,6 @@
                 if (!AudioContext) return;
                 const ctx = new AudioContext();
 
-                // Doble pitido suave y claro tipo reloj deportivo
                 [0, 0.22].forEach((delay, idx) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
@@ -1359,7 +1455,7 @@
         }
 
         /**
-         * 8. RENDERIZADO DE HISTORIAL Y ESTADÍSTICAS
+         * 9. RENDERIZADO DE HISTORIAL Y ESTADÍSTICAS
          */
         function renderHistory() {
             const list = document.getElementById('history-list');
@@ -1446,7 +1542,7 @@
         }
 
         /**
-         * 9. AJUSTES, COPIAS DE SEGURIDAD (JSON / CSV) Y NAVEGACIÓN
+         * 10. AJUSTES, COPIAS DE SEGURIDAD (JSON / CSV) Y NAVEGACIÓN
          */
         function switchTab(tabName) {
             ['workout', 'history', 'settings'].forEach(t => {
@@ -1486,6 +1582,7 @@
         function exportDataJSON() {
             const payload = {
                 app: 'IronLog',
+                version: '2.1',
                 exportedAt: new Date().toISOString(),
                 routine: appState.routine,
                 history: appState.history,
@@ -1573,7 +1670,7 @@
         }
 
         /**
-         * 10. UTILIDADES DE UI (TOAST Y MODAL DE CONFIRMACIÓN)
+         * 11. UTILIDADES DE UI (TOAST Y MODAL DE CONFIRMACIÓN)
          */
         let toastTimeout = null;
         function showToast(message, type = 'success') {
@@ -1621,24 +1718,15 @@
         };
 
         /**
-         * 11. CRONÓMETRO DE DURACIÓN DE SESIÓN Y ARRANQUE
+         * 12. ARRANQUE DE LA APLICACIÓN
          */
-        function startSessionClock() {
-            setInterval(() => {
-                const elapsed = Math.floor((Date.now() - appState.sessionStartTime) / 1000);
-                const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
-                const secs = (elapsed % 60).toString().padStart(2, '0');
-                const el = document.getElementById('session-duration');
-                if (el) el.textContent = `${mins}:${secs}`;
-            }, 1000);
-        }
-
         window.onload = function() {
             generateAppIcon();
             loadState();
             renderDayTabs();
             renderWorkoutDay();
-            startSessionClock();
+            updateSessionClockUI();
+            startSessionClockLoop();
         };
     </script>
 </body>
