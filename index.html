@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="IronLog Gym">
 <meta name="theme-color" content="#0b0d12">
-<title>IronLog Gym v3.0</title>
+<title>IronLog Gym v3.1</title>
 <style>
   :root {
     --bg: #0b0d12;
@@ -383,6 +383,17 @@
     margin-bottom: 8px;
   }
 
+  .field-label {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .field-group {
+    margin-bottom: 10px;
+  }
+
   .muted {
     color: var(--muted);
     font-size: 0.82rem;
@@ -405,7 +416,7 @@
   <header class="topbar">
     <div class="brand">
       <span>IronLog Gym</span>
-      <span class="version-badge">v3.0</span>
+      <span class="version-badge">v3.1</span>
     </div>
     <div class="timer-box">
       <span id="sessionTimerDisplay" class="timer-display">00:00</span>
@@ -437,7 +448,7 @@
 
   <main id="viewCatalog" class="hidden">
     <h2 style="margin: 12px 0 6px 0;">Base de datos de ejercicios</h2>
-    <p class="muted" style="margin-top: 0;">Añade movimientos nuevos a tu catálogo. Sus series y pesos quedan guardados cada vez que los registres.</p>
+    <p class="muted" style="margin-top: 0;">Crea, edita o filtra ejercicios. Sus series y pesos quedan guardados cada vez que los registres.</p>
 
     <div class="card">
       <div style="font-weight: 700; margin-bottom: 8px;">Crear nuevo ejercicio</div>
@@ -542,6 +553,43 @@
       </select>
     </div>
     <div id="modalCatalogList"></div>
+  </div>
+</div>
+
+<div id="editExerciseModal" class="modal-backdrop" onclick="closeEditExerciseModalOnBackdrop(event)">
+  <div class="modal-sheet">
+    <div class="row-gap" style="justify-content: space-between; margin-bottom: 12px;">
+      <strong style="font-size: 1rem;">Editar ejercicio</strong>
+      <button class="btn-sm" onclick="closeEditExerciseModal()">Cerrar</button>
+    </div>
+    <input id="editExId" type="hidden">
+    <div class="field-group">
+      <label class="field-label" for="editExName">Nombre del ejercicio</label>
+      <input id="editExName" type="text" placeholder="Nombre del ejercicio">
+    </div>
+    <div class="row-gap field-group">
+      <div style="flex: 1; min-width: 130px;">
+        <label class="field-label" for="editExGroup">Grupo muscular</label>
+        <select id="editExGroup">
+          <option value="Pecho">Pecho</option>
+          <option value="Espalda">Espalda</option>
+          <option value="Pierna">Pierna</option>
+          <option value="Hombro">Hombro</option>
+          <option value="Bíceps">Bíceps</option>
+          <option value="Tríceps">Tríceps</option>
+          <option value="Core">Core</option>
+          <option value="General">General</option>
+        </select>
+      </div>
+      <div style="flex: 1.4; min-width: 150px;">
+        <label class="field-label" for="editExEquip">Equipo</label>
+        <input id="editExEquip" type="text" placeholder="Ej. Multipower, Polea, Mancuernas">
+      </div>
+    </div>
+    <div class="row-gap" style="justify-content: flex-end;">
+      <button onclick="closeEditExerciseModal()">Cancelar</button>
+      <button class="btn-accent" onclick="saveEditedExercise()">Guardar cambios</button>
+    </div>
   </div>
 </div>
 
@@ -676,10 +724,72 @@ function ensureDayDraft(dayNum) {
   return draft;
 }
 
+// Editar ejercicio existente (nombre, grupo, equipo) conservando su ID e historial
+function openEditExerciseModal(exId) {
+  const ex = getExerciseById(exId);
+  document.getElementById("editExId").value = ex.id;
+  document.getElementById("editExName").value = ex.name || "";
+  const groupSel = document.getElementById("editExGroup");
+  const hasOption = Array.from(groupSel.options).some(opt => opt.value === ex.group);
+  groupSel.value = hasOption ? ex.group : "General";
+  document.getElementById("editExEquip").value = ex.equip || "";
+  document.getElementById("editExerciseModal").classList.add("open");
+}
+
+function closeEditExerciseModal() {
+  document.getElementById("editExerciseModal").classList.remove("open");
+}
+
+function closeEditExerciseModalOnBackdrop(e) {
+  if (e.target.id === "editExerciseModal") closeEditExerciseModal();
+}
+
+function saveEditedExercise() {
+  const exId = document.getElementById("editExId").value;
+  const newName = (document.getElementById("editExName").value || "").trim();
+  const newGroup = document.getElementById("editExGroup").value;
+  const newEquip = (document.getElementById("editExEquip").value || "").trim();
+  if (!exId || !newName) return;
+
+  const idx = catalog.findIndex(item => item.id === exId);
+  if (idx >= 0) {
+    catalog[idx] = {
+      ...catalog[idx],
+      name: newName,
+      group: newGroup,
+      equip: newEquip
+    };
+  } else {
+    catalog.unshift({
+      id: exId,
+      name: newName,
+      group: newGroup,
+      equip: newEquip,
+      restSec: 90
+    });
+  }
+
+  historyData.forEach(sess => {
+    (sess.exercises || []).forEach(entry => {
+      if (entry.exerciseId === exId) {
+        entry.name = newName;
+        entry.group = newGroup;
+      }
+    });
+  });
+
+  saveJSON(STORAGE_KEYS.CATALOG, catalog);
+  saveJSON(STORAGE_KEYS.HISTORY, historyData);
+  closeEditExerciseModal();
+  renderWorkout();
+  renderDatabaseTab();
+  renderHistoryTab();
+}
+
 // Cronómetro manual de sesión (arranca detenido)
 let sessionSeconds = 0;
 let sessionInterval = null;
-let sessionState = "idle"; // idle | running | paused
+let sessionState = "idle";
 
 function formatTime(sec) {
   const m = Math.floor(sec / 60);
@@ -833,6 +943,7 @@ function renderWorkout() {
           <div class="ex-meta">${escapeHtml(ex.group)}${ex.equip ? " · " + escapeHtml(ex.equip) : ""}</div>
         </div>
         <div class="ex-controls">
+          <button class="btn-sm" onclick="openEditExerciseModal('${exId}')" title="Editar nombre/grupo/equipo">✎</button>
           <button class="btn-sm" onclick="moveExercise(${idx}, -1)" ${idx === 0 ? "disabled" : ""} title="Subir">▲</button>
           <button class="btn-sm" onclick="moveExercise(${idx}, 1)" ${idx === draft.order.length - 1 ? "disabled" : ""} title="Bajar">▼</button>
           <button class="btn-sm btn-danger" onclick="removeExerciseFromDay('${exId}')" title="Quitar">✕</button>
@@ -1075,7 +1186,10 @@ function renderDatabaseTab() {
         <div class="muted">${escapeHtml(item.group)}${item.equip ? " · " + escapeHtml(item.equip) : ""}</div>
         <div class="muted" style="margin-top:2px;">Última: ${escapeHtml(lastSummary)}</div>
       </div>
-      <button class="btn-sm" onclick="switchTab('workout'); addExerciseToActiveDay('${item.id}')">A hoy</button>
+      <div class="row-gap" style="gap:4px; flex-shrink:0;">
+        <button class="btn-sm" onclick="openEditExerciseModal('${item.id}')" title="Editar">✎</button>
+        <button class="btn-sm" onclick="switchTab('workout'); addExerciseToActiveDay('${item.id}')">A hoy</button>
+      </div>
     `;
     list.appendChild(row);
   });
@@ -1093,8 +1207,10 @@ function renderHistoryTab() {
     const dt = new Date(sess.date);
     const fechaStr = dt.toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
     const exSummary = (sess.exercises || []).map(e => {
+      const liveEx = getExerciseById(e.exerciseId);
+      const displayName = liveEx && liveEx.name ? liveEx.name : e.name;
       const setsStr = (e.sets || []).map(s => `${s.weight || 0}kg×${s.reps || 0}`).join(", ");
-      return `<div class="muted">• <strong>${escapeHtml(e.name)}</strong>: ${escapeHtml(setsStr)}</div>`;
+      return `<div class="muted">• <strong>${escapeHtml(displayName)}</strong>: ${escapeHtml(setsStr)}</div>`;
     }).join("");
 
     const box = document.createElement("div");
@@ -1112,7 +1228,7 @@ function renderHistoryTab() {
 
 function exportBackupJSON() {
   const payload = {
-    version: "3.0",
+    version: "3.1",
     exportedAt: new Date().toISOString(),
     catalog,
     routine,
@@ -1123,7 +1239,7 @@ function exportBackupJSON() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `ironlog-v3-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `ironlog-v3.1-backup-${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -1179,10 +1295,10 @@ function switchTab(tab) {
 
 function escapeHtml(str) {
   return String(str || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/&/g, "&")
+    .replace(/</g, "<")
+    .replace(/>/g, ">")
+    .replace(/"/g, """);
 }
 
 updateSessionTimerUI();
