@@ -554,4 +554,764 @@
         <option value="Hombro">Hombro</option>
         <option value="Bíceps">Bíceps</option>
         <option value="Tríceps">Tríceps</option>
-        <option value="Core">Core
+        <option value="Core">Core</option>
+      </select>
+    </div>
+    <div id="modalCatalogList"></div>
+  </div>
+</div>
+
+<div id="editExerciseModal" class="modal-backdrop" onclick="closeEditExerciseModalOnBackdrop(event)">
+  <div class="modal-sheet">
+    <div class="row-gap" style="justify-content: space-between; margin-bottom: 12px;">
+      <strong style="font-size: 1rem;">Editar ejercicio</strong>
+      <button class="btn-sm" onclick="closeEditExerciseModal()">Cerrar</button>
+    </div>
+    <input id="editExId" type="hidden">
+    <div class="field-group">
+      <label class="field-label" for="editExName">Nombre del ejercicio</label>
+      <input id="editExName" type="text" placeholder="Nombre del ejercicio">
+    </div>
+    <div class="row-gap field-group">
+      <div style="flex: 1; min-width: 130px;">
+        <label class="field-label" for="editExGroup">Grupo muscular</label>
+        <select id="editExGroup">
+          <option value="Pecho">Pecho</option>
+          <option value="Espalda">Espalda</option>
+          <option value="Pierna">Pierna</option>
+          <option value="Hombro">Hombro</option>
+          <option value="Bíceps">Bíceps</option>
+          <option value="Tríceps">Tríceps</option>
+          <option value="Core">Core</option>
+          <option value="General">General</option>
+        </select>
+      </div>
+      <div style="flex: 1.4; min-width: 150px;">
+        <label class="field-label" for="editExEquip">Equipo</label>
+        <input id="editExEquip" type="text" placeholder="Ej. Multipower, Polea, Mancuernas">
+      </div>
+    </div>
+    <div class="row-gap" style="justify-content: flex-end;">
+      <button onclick="closeEditExerciseModal()">Cancelar</button>
+      <button class="btn-accent" onclick="saveEditedExercise()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEYS = {
+  CATALOG: "ironlog_v3_catalog",
+  ROUTINE: "ironlog_v3_routine",
+  ACTIVE_DRAFT: "ironlog_v3_draft",
+  HISTORY: "ironlog_v3_history",
+  ACTIVE_DAY: "ironlog_v3_active_day"
+};
+
+const DEFAULT_CATALOG = [
+  // Pecho
+  { id: "pecho_press_banca", name: "Press banca plano con barra", group: "Pecho", equip: "Barra", restSec: 120 },
+  { id: "pecho_press_inc_manc", name: "Press inclinado con mancuernas", group: "Pecho", equip: "Mancuernas", restSec: 105 },
+  { id: "pecho_press_inc_maq", name: "Press inclinado en máquina", group: "Pecho", equip: "Máquina", restSec: 90 },
+  { id: "pecho_contractor", name: "Contractor / Peck Deck", group: "Pecho", equip: "Máquina", restSec: 75 },
+  { id: "pecho_cruces_polea", name: "Cruces en polea", group: "Pecho", equip: "Polea", restSec: 75 },
+  { id: "pecho_fondos", name: "Fondos en paralelas (pecho)", group: "Pecho", equip: "Peso corporal / Lastre", restSec: 90 },
+  // Espalda
+  { id: "espalda_jalon_pecho", name: "Jalón al pecho en polea", group: "Espalda", equip: "Polea", restSec: 90 },
+  { id: "espalda_remo_gironda", name: "Remo en polea baja (Gironda)", group: "Espalda", equip: "Polea", restSec: 90 },
+  { id: "espalda_remo_barra", name: "Remo con barra", group: "Espalda", equip: "Barra", restSec: 120 },
+  { id: "espalda_remo_manc", name: "Remo con mancuerna a una mano", group: "Espalda", equip: "Mancuerna", restSec: 90 },
+  { id: "espalda_remo_maq", name: "Remo en máquina / Chest Supported", group: "Espalda", equip: "Máquina", restSec: 90 },
+  { id: "espalda_pullover", name: "Pullover en polea alta", group: "Espalda", equip: "Polea", restSec: 75 },
+  { id: "espalda_dominadas", name: "Dominadas / Asistidas", group: "Espalda", equip: "Barra / Máquina", restSec: 105 },
+  // Pierna
+  { id: "pierna_sentadilla", name: "Sentadilla con barra / Multipower", group: "Pierna", equip: "Barra / Multipower", restSec: 150 },
+  { id: "pierna_prensa", name: "Prensa inclinada / horizontal", group: "Pierna", equip: "Máquina", restSec: 120 },
+  { id: "pierna_extension", name: "Extensión de cuádriceps", group: "Pierna", equip: "Máquina", restSec: 75 },
+  { id: "pierna_femoral_tumbado", name: "Curl femoral tumbado / sentado", group: "Pierna", equip: "Máquina", restSec: 75 },
+  { id: "pierna_peso_muerto_rum", name: "Peso muerto rumano", group: "Pierna", equip: "Barra / Mancuernas", restSec: 120 },
+  { id: "pierna_hip_thrust", name: "Hip Thrust", group: "Pierna", equip: "Barra / Máquina", restSec: 105 },
+  { id: "pierna_gemelo_pie", name: "Elevación de gemelo de pie", group: "Pierna", equip: "Máquina", restSec: 60 },
+  { id: "pierna_gemelo_sentado", name: "Gemelo sentado", group: "Pierna", equip: "Máquina", restSec: 60 },
+  { id: "pierna_aductor", name: "Aductor en máquina", group: "Pierna", equip: "Máquina", restSec: 60 },
+  { id: "pierna_abductor", name: "Abductor en máquina", group: "Pierna", equip: "Máquina", restSec: 60 },
+  // Hombro
+  { id: "hombro_press_manc", name: "Press militar con mancuernas", group: "Hombro", equip: "Mancuernas", restSec: 105 },
+  { id: "hombro_press_maq", name: "Press de hombros en máquina", group: "Hombro", equip: "Máquina", restSec: 90 },
+  { id: "hombro_laterales_manc", name: "Elevaciones laterales con mancuernas", group: "Hombro", equip: "Mancuernas", restSec: 60 },
+  { id: "hombro_laterales_polea", name: "Elevaciones laterales en polea", group: "Hombro", equip: "Polea", restSec: 60 },
+  { id: "hombro_pajaro", name: "Pájaros / Posterior en máquina", group: "Hombro", equip: "Máquina / Mancuernas", restSec: 75 },
+  // Bíceps
+  { id: "biceps_curl_barra", name: "Curl con barra / EZ", group: "Bíceps", equip: "Barra EZ", restSec: 75 },
+  { id: "biceps_curl_manc", name: "Curl con mancuernas", group: "Bíceps", equip: "Mancuernas", restSec: 75 },
+  { id: "biceps_martillo", name: "Curl martillo", group: "Bíceps", equip: "Mancuernas / Cuerda", restSec: 75 },
+  { id: "biceps_predicador", name: "Curl en banco Scott / Predicador", group: "Bíceps", equip: "Máquina / Barra", restSec: 75 },
+  // Tríceps
+  { id: "triceps_polea_cuerda", name: "Extensión de tríceps en polea (cuerda)", group: "Tríceps", equip: "Polea", restSec: 60 },
+  { id: "triceps_press_frances", name: "Press francés / Rompecráneos", group: "Tríceps", equip: "Barra EZ / Mancuernas", restSec: 75 },
+  { id: "triceps_copa", name: "Extensión tras nuca / Copa", group: "Tríceps", equip: "Mancuerna / Polea", restSec: 75 },
+  { id: "triceps_fondos_maq", name: "Fondos en máquina / Paralelas tríceps", group: "Tríceps", equip: "Máquina / Paralelas", restSec: 75 },
+  // Core
+  { id: "core_crunch_polea", name: "Crunch abdominal en polea", group: "Core", equip: "Polea", restSec: 60 },
+  { id: "core_elev_piernas", name: "Elevación de piernas", group: "Core", equip: "Soporte / Banco", restSec: 60 }
+];
+
+const DEFAULT_ROUTINE = {
+  1: { name: "Día 1 · Pecho", subtitle: "Hipertrofia pectoral ~1 h", exercises: ["pecho_press_inc_manc", "pecho_press_banca", "pecho_contractor", "pecho_cruces_polea"] },
+  2: { name: "Día 2 · Pierna completa", subtitle: "Cuádriceps, femoral, glúteo y gemelo", exercises: ["pierna_sentadilla", "pierna_prensa", "pierna_extension", "pierna_femoral_tumbado", "pierna_gemelo_pie"] },
+  3: { name: "Día 3 · Espalda", subtitle: "Amplitud y grosor dorsal ~1 h", exercises: ["espalda_jalon_pecho", "espalda_remo_gironda", "espalda_remo_manc", "espalda_pullover"] },
+  4: { name: "Día 4 · Bíceps + Tríceps", subtitle: "Brazos completos ~1 h", exercises: ["biceps_curl_barra", "triceps_polea_cuerda", "biceps_martillo", "triceps_press_frances"] },
+  5: { name: "Día 5 · Hombro", subtitle: "Deltoides lateral, frontal y posterior", exercises: ["hombro_press_manc", "hombro_laterales_manc", "hombro_laterales_polea", "hombro_pajaro"] },
+  6: { name: "Día 6 · Pecho + Espalda (Recuerdo)", subtitle: "Estímulo moderado 1-2 RIR", exercises: ["pecho_press_inc_maq", "espalda_remo_maq", "pecho_contractor", "espalda_jalon_pecho"] },
+  7: { name: "Día 7 · Extra / Descanso activo", subtitle: "Sesión ligera opcional o recuperación", exercises: ["pierna_extension", "pierna_femoral_tumbado", "core_crunch_polea"] }
+};
+
+function cloneData(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function loadJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : cloneData(fallback);
+  } catch (e) {
+    return cloneData(fallback);
+  }
+}
+
+function saveJSON(key, val) {
+  localStorage.setItem(key, JSON.stringify(val));
+}
+
+let catalog = loadJSON(STORAGE_KEYS.CATALOG, DEFAULT_CATALOG);
+let routine = loadJSON(STORAGE_KEYS.ROUTINE, DEFAULT_ROUTINE);
+let historyData = loadJSON(STORAGE_KEYS.HISTORY, []);
+let activeDay = Number(localStorage.getItem(STORAGE_KEYS.ACTIVE_DAY) || 1);
+let drafts = loadJSON(STORAGE_KEYS.ACTIVE_DRAFT, {});
+
+function getExerciseById(id) {
+  return catalog.find(item => item.id === id) || {
+    id,
+    name: id,
+    group: "General",
+    equip: "",
+    restSec: 90
+  };
+}
+
+function getLastSetsForExercise(exId) {
+  for (let i = historyData.length - 1; i >= 0; i--) {
+    const session = historyData[i];
+    const found = (session.exercises || []).find(e => e.exerciseId === exId);
+    if (found && Array.isArray(found.sets) && found.sets.length > 0) {
+      return found.sets;
+    }
+  }
+  return null;
+}
+
+function ensureDayDraft(dayNum) {
+  if (!drafts[dayNum]) {
+    const dayExIds = (routine[dayNum] && routine[dayNum].exercises) ? routine[dayNum].exercises : [];
+    drafts[dayNum] = {
+      order: [...dayExIds],
+      setsByEx: {}
+    };
+  }
+  const draft = drafts[dayNum];
+  for (const exId of draft.order) {
+    if (!draft.setsByEx[exId] || draft.setsByEx[exId].length === 0) {
+      const prev = getLastSetsForExercise(exId);
+      const count = prev ? prev.length : 3;
+      draft.setsByEx[exId] = Array.from({ length: count }, () => ({
+        weight: "",
+        reps: "",
+        done: false
+      }));
+    }
+  }
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+  return draft;
+}
+
+// Editar ejercicio existente (nombre, grupo, equipo) conservando su ID e historial
+function openEditExerciseModal(exId) {
+  const ex = getExerciseById(exId);
+  document.getElementById("editExId").value = ex.id;
+  document.getElementById("editExName").value = ex.name || "";
+  const groupSel = document.getElementById("editExGroup");
+  const hasOption = Array.from(groupSel.options).some(opt => opt.value === ex.group);
+  groupSel.value = hasOption ? ex.group : "General";
+  document.getElementById("editExEquip").value = ex.equip || "";
+  document.getElementById("editExerciseModal").classList.add("open");
+}
+
+function closeEditExerciseModal() {
+  document.getElementById("editExerciseModal").classList.remove("open");
+}
+
+function closeEditExerciseModalOnBackdrop(e) {
+  if (e.target.id === "editExerciseModal") closeEditExerciseModal();
+}
+
+function saveEditedExercise() {
+  const exId = document.getElementById("editExId").value;
+  const newName = (document.getElementById("editExName").value || "").trim();
+  const newGroup = document.getElementById("editExGroup").value;
+  const newEquip = (document.getElementById("editExEquip").value || "").trim();
+  if (!exId || !newName) return;
+
+  const idx = catalog.findIndex(item => item.id === exId);
+  if (idx >= 0) {
+    catalog[idx] = {
+      ...catalog[idx],
+      name: newName,
+      group: newGroup,
+      equip: newEquip
+    };
+  } else {
+    catalog.unshift({
+      id: exId,
+      name: newName,
+      group: newGroup,
+      equip: newEquip,
+      restSec: 90
+    });
+  }
+
+  historyData.forEach(sess => {
+    (sess.exercises || []).forEach(entry => {
+      if (entry.exerciseId === exId) {
+        entry.name = newName;
+        entry.group = newGroup;
+      }
+    });
+  });
+
+  saveJSON(STORAGE_KEYS.CATALOG, catalog);
+  saveJSON(STORAGE_KEYS.HISTORY, historyData);
+  closeEditExerciseModal();
+  renderWorkout();
+  renderDatabaseTab();
+  renderHistoryTab();
+}
+
+// Cronómetro manual de sesión (arranca detenido)
+let sessionSeconds = 0;
+let sessionInterval = null;
+let sessionState = "idle";
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+function updateSessionTimerUI() {
+  document.getElementById("sessionTimerDisplay").textContent = formatTime(sessionSeconds);
+  const btnStart = document.getElementById("sessionTimerToggleBtn");
+  const btnPause = document.getElementById("sessionTimerPauseBtn");
+  const btnResume = document.getElementById("sessionTimerResumeBtn");
+
+  btnStart.classList.toggle("hidden", sessionState !== "idle");
+  btnPause.classList.toggle("hidden", sessionState !== "running");
+  btnResume.classList.toggle("hidden", sessionState !== "paused");
+}
+
+function toggleSessionTimer() {
+  if (sessionState === "idle") {
+    resumeSessionTimer();
+  }
+}
+
+function pauseSessionTimer() {
+  clearInterval(sessionInterval);
+  sessionInterval = null;
+  sessionState = "paused";
+  updateSessionTimerUI();
+}
+
+function resumeSessionTimer() {
+  clearInterval(sessionInterval);
+  sessionState = "running";
+  updateSessionTimerUI();
+  sessionInterval = setInterval(() => {
+    sessionSeconds += 1;
+    updateSessionTimerUI();
+  }, 1000);
+}
+
+function resetSessionTimer() {
+  clearInterval(sessionInterval);
+  sessionInterval = null;
+  sessionSeconds = 0;
+  sessionState = "idle";
+  updateSessionTimerUI();
+}
+
+// Temporizador de descanso entre series
+let restRemaining = 0;
+let restInterval = null;
+
+function startRestTimer(seconds) {
+  clearInterval(restInterval);
+  restRemaining = seconds || 90;
+  document.getElementById("restBanner").classList.add("show");
+  updateRestText();
+  restInterval = setInterval(() => {
+    restRemaining -= 1;
+    if (restRemaining <= 0) {
+      stopRestTimer();
+    } else {
+      updateRestText();
+    }
+  }, 1000);
+}
+
+function addRestSeconds(sec) {
+  restRemaining = Math.max(0, restRemaining + sec);
+  updateRestText();
+}
+
+function stopRestTimer() {
+  clearInterval(restInterval);
+  restInterval = null;
+  restRemaining = 0;
+  document.getElementById("restBanner").classList.remove("show");
+}
+
+function updateRestText() {
+  document.getElementById("restCountdownText").textContent = formatTime(restRemaining);
+}
+
+// Renderizado de la rutina del día
+function renderDayStrip() {
+  const strip = document.getElementById("dayStrip");
+  strip.innerHTML = "";
+  for (let d = 1; d <= 7; d++) {
+    const info = routine[d];
+    const btn = document.createElement("button");
+    btn.className = "day-pill" + (d === activeDay ? " active" : "");
+    btn.textContent = d === 7 ? "Día 7 · Extra" : `Día ${d}`;
+    btn.title = info ? info.name : `Día ${d}`;
+    btn.onclick = () => {
+      activeDay = d;
+      localStorage.setItem(STORAGE_KEYS.ACTIVE_DAY, String(d));
+      renderWorkout();
+    };
+    strip.appendChild(btn);
+  }
+}
+
+function renderWorkout() {
+  renderDayStrip();
+  const dayInfo = routine[activeDay] || { name: `Día ${activeDay}`, subtitle: "" };
+  document.getElementById("sessionTitle").textContent = dayInfo.name;
+  document.getElementById("sessionSub").textContent = dayInfo.subtitle;
+
+  const draft = ensureDayDraft(activeDay);
+  const prevMap = {};
+  for (const exId of draft.order) {
+    prevMap[exId] = getLastSetsForExercise(exId);
+  }
+
+  const container = document.getElementById("exerciseList");
+  container.innerHTML = "";
+
+  draft.order.forEach((exId, idx) => {
+    const ex = getExerciseById(exId);
+    const sets = draft.setsByEx[exId] || [];
+    const prevSets = prevMap[exId] || [];
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    let rowsHtml = "";
+    sets.forEach((s, sIdx) => {
+      const p = prevSets[sIdx];
+      const prevLabel = (p && (p.weight !== "" || p.reps !== ""))
+        ? `${p.weight || 0} kg × ${p.reps || 0}`
+        : "—";
+
+      rowsHtml += `
+        <tr>
+          <td style="font-weight:700; width:28px;">${sIdx + 1}</td>
+          <td><span class="prev-tag">${prevLabel}</span></td>
+          <td><input type="number" step="0.5" min="0" placeholder="kg" value="${s.weight}" onchange="updateSetField('${exId}', ${sIdx}, 'weight', this.value)"></td>
+          <td><input type="number" step="1" min="0" placeholder="reps" value="${s.reps}" onchange="updateSetField('${exId}', ${sIdx}, 'reps', this.value)"></td>
+          <td style="text-align:right; width:40px;">
+            <button class="set-check ${s.done ? "done" : ""}" onclick="toggleSetDone('${exId}', ${sIdx}, ${ex.restSec || 90})">✓</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    card.innerHTML = `
+      <div class="ex-top">
+        <div>
+          <div class="ex-name">${escapeHtml(ex.name)}</div>
+          <div class="ex-meta">${escapeHtml(ex.group)}${ex.equip ? " · " + escapeHtml(ex.equip) : ""}</div>
+        </div>
+        <div class="ex-controls">
+          <button class="btn-sm" onclick="openEditExerciseModal('${exId}')" title="Editar nombre/grupo/equipo">✎</button>
+          <button class="btn-sm" onclick="moveExercise(${idx}, -1)" ${idx === 0 ? "disabled" : ""} title="Subir">▲</button>
+          <button class="btn-sm" onclick="moveExercise(${idx}, 1)" ${idx === draft.order.length - 1 ? "disabled" : ""} title="Bajar">▼</button>
+          <button class="btn-sm btn-danger" onclick="removeExerciseFromDay('${exId}')" title="Quitar">✕</button>
+        </div>
+      </div>
+      <table class="sets-table">
+        <thead>
+          <tr>
+            <th>Serie</th>
+            <th>Anterior</th>
+            <th>Peso (kg)</th>
+            <th>Reps</th>
+            <th style="text-align:right;">Hecho</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+      <div class="ex-footer">
+        <div class="row-gap">
+          <button class="btn-sm" onclick="addSetToExercise('${exId}')">+ Serie</button>
+          <button class="btn-sm" onclick="removeLastSet('${exId}')">- Serie</button>
+        </div>
+        <button class="btn-sm" onclick="fillPrevWeights('${exId}')">Copiar anterior</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function updateSetField(exId, setIdx, field, val) {
+  const draft = ensureDayDraft(activeDay);
+  if (!draft.setsByEx[exId] || !draft.setsByEx[exId][setIdx]) return;
+  draft.setsByEx[exId][setIdx][field] = val;
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+}
+
+function toggleSetDone(exId, setIdx, restSec) {
+  const draft = ensureDayDraft(activeDay);
+  const s = draft.setsByEx[exId][setIdx];
+  s.done = !s.done;
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+  renderWorkout();
+  if (s.done) {
+    startRestTimer(restSec);
+  }
+}
+
+function addSetToExercise(exId) {
+  const draft = ensureDayDraft(activeDay);
+  draft.setsByEx[exId].push({ weight: "", reps: "", done: false });
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+  renderWorkout();
+}
+
+function removeLastSet(exId) {
+  const draft = ensureDayDraft(activeDay);
+  if (draft.setsByEx[exId].length > 1) {
+    draft.setsByEx[exId].pop();
+    saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+    renderWorkout();
+  }
+}
+
+function fillPrevWeights(exId) {
+  const prev = getLastSetsForExercise(exId);
+  if (!prev) return;
+  const draft = ensureDayDraft(activeDay);
+  draft.setsByEx[exId].forEach((s, i) => {
+    if (prev[i]) {
+      if (prev[i].weight !== "") s.weight = prev[i].weight;
+      if (prev[i].reps !== "") s.reps = prev[i].reps;
+    }
+  });
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+  renderWorkout();
+}
+
+function moveExercise(index, delta) {
+  const draft = ensureDayDraft(activeDay);
+  const target = index + delta;
+  if (target < 0 || target >= draft.order.length) return;
+  const temp = draft.order[index];
+  draft.order[index] = draft.order[target];
+  draft.order[target] = temp;
+  routine[activeDay].exercises = [...draft.order];
+  saveJSON(STORAGE_KEYS.ROUTINE, routine);
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+  renderWorkout();
+}
+
+function removeExerciseFromDay(exId) {
+  const draft = ensureDayDraft(activeDay);
+  draft.order = draft.order.filter(id => id !== exId);
+  routine[activeDay].exercises = [...draft.order];
+  saveJSON(STORAGE_KEYS.ROUTINE, routine);
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+  renderWorkout();
+}
+
+function resetDayOrder() {
+  const baseIds = (DEFAULT_ROUTINE[activeDay] && DEFAULT_ROUTINE[activeDay].exercises) ? DEFAULT_ROUTINE[activeDay].exercises : [];
+  routine[activeDay].exercises = [...baseIds];
+  drafts[activeDay].order = [...baseIds];
+  saveJSON(STORAGE_KEYS.ROUTINE, routine);
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+  renderWorkout();
+}
+
+function saveWorkoutSession() {
+  const draft = ensureDayDraft(activeDay);
+  const exercisesSnapshot = draft.order.map(exId => {
+    const ex = getExerciseById(exId);
+    return {
+      exerciseId: exId,
+      name: ex.name,
+      group: ex.group,
+      sets: (draft.setsByEx[exId] || []).map(s => ({
+        weight: s.weight,
+        reps: s.reps,
+        done: Boolean(s.done)
+      }))
+    };
+  });
+
+  const entry = {
+    id: "sess_" + Date.now(),
+    date: new Date().toISOString(),
+    dayNumber: activeDay,
+    dayName: routine[activeDay] ? routine[activeDay].name : `Día ${activeDay}`,
+    durationSec: sessionSeconds,
+    exercises: exercisesSnapshot
+  };
+
+  historyData.push(entry);
+  saveJSON(STORAGE_KEYS.HISTORY, historyData);
+  alert("Sesión guardada. Las series quedan disponibles como referencia para la próxima vez.");
+}
+
+// Base de datos y modal para añadir ejercicios
+function openCatalogModal() {
+  document.getElementById("modalSearchInput").value = "";
+  document.getElementById("modalGroupFilter").value = "ALL";
+  renderModalCatalog();
+  document.getElementById("catalogModal").classList.add("open");
+}
+
+function closeCatalogModal() {
+  document.getElementById("catalogModal").classList.remove("open");
+}
+
+function closeCatalogModalOnBackdrop(e) {
+  if (e.target.id === "catalogModal") closeCatalogModal();
+}
+
+function renderModalCatalog() {
+  const q = (document.getElementById("modalSearchInput").value || "").toLowerCase().trim();
+  const grp = document.getElementById("modalGroupFilter").value;
+  const list = document.getElementById("modalCatalogList");
+  list.innerHTML = "";
+
+  const filtered = catalog.filter(item => {
+    const matchesGroup = grp === "ALL" || item.group === grp;
+    const matchesText = !q || item.name.toLowerCase().includes(q) || (item.equip || "").toLowerCase().includes(q);
+    return matchesGroup && matchesText;
+  });
+
+  filtered.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "catalog-item";
+    row.innerHTML = `
+      <div>
+        <div style="font-weight:700; font-size:0.9rem;">${escapeHtml(item.name)}</div>
+        <div class="muted">${escapeHtml(item.group)}${item.equip ? " · " + escapeHtml(item.equip) : ""}</div>
+      </div>
+      <button class="btn-sm btn-accent" onclick="addExerciseToActiveDay('${item.id}')">+ Añadir</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function addExerciseToActiveDay(exId) {
+  const draft = ensureDayDraft(activeDay);
+  draft.order.push(exId);
+  const prev = getLastSetsForExercise(exId);
+  const count = prev ? prev.length : 3;
+  draft.setsByEx[exId] = Array.from({ length: count }, () => ({ weight: "", reps: "", done: false }));
+  routine[activeDay].exercises = [...draft.order];
+  saveJSON(STORAGE_KEYS.ROUTINE, routine);
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+  closeCatalogModal();
+  renderWorkout();
+}
+
+function createCustomExercise() {
+  const nameInput = document.getElementById("newExName");
+  const groupSelect = document.getElementById("newExGroup");
+  const equipInput = document.getElementById("newExEquip");
+
+  const name = (nameInput.value || "").trim();
+  if (!name) return;
+
+  const newItem = {
+    id: "custom_" + Date.now(),
+    name,
+    group: groupSelect.value,
+    equip: (equipInput.value || "").trim(),
+    restSec: 90
+  };
+
+  catalog.unshift(newItem);
+  saveJSON(STORAGE_KEYS.CATALOG, catalog);
+  nameInput.value = "";
+  equipInput.value = "";
+  renderDatabaseTab();
+}
+
+function renderDatabaseTab() {
+  const q = (document.getElementById("dbSearchInput").value || "").toLowerCase().trim();
+  const grp = document.getElementById("dbGroupFilter").value;
+  const list = document.getElementById("databaseList");
+  list.innerHTML = "";
+
+  const filtered = catalog.filter(item => {
+    const matchesGroup = grp === "ALL" || item.group === grp;
+    const matchesText = !q || item.name.toLowerCase().includes(q) || (item.equip || "").toLowerCase().includes(q);
+    return matchesGroup && matchesText;
+  });
+
+  filtered.forEach(item => {
+    const lastSets = getLastSetsForExercise(item.id);
+    const lastSummary = lastSets
+      ? lastSets.map((s, i) => `S${i + 1}: ${s.weight || 0}kg×${s.reps || 0}`).join(" · ")
+      : "Sin registros previos";
+
+    const row = document.createElement("div");
+    row.className = "catalog-item";
+    row.innerHTML = `
+      <div>
+        <div style="font-weight:700; font-size:0.9rem;">${escapeHtml(item.name)}</div>
+        <div class="muted">${escapeHtml(item.group)}${item.equip ? " · " + escapeHtml(item.equip) : ""}</div>
+        <div class="muted" style="margin-top:2px;">Última: ${escapeHtml(lastSummary)}</div>
+      </div>
+      <div class="row-gap" style="gap:4px; flex-shrink:0;">
+        <button class="btn-sm" onclick="openEditExerciseModal('${item.id}')" title="Editar">✎</button>
+        <button class="btn-sm" onclick="switchTab('workout'); addExerciseToActiveDay('${item.id}')">A hoy</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function renderHistoryTab() {
+  const list = document.getElementById("historyList");
+  list.innerHTML = "";
+  if (historyData.length === 0) {
+    list.innerHTML = `<div class="card"><div class="muted">Todavía no hay sesiones guardadas.</div></div>`;
+    return;
+  }
+
+  [...historyData].reverse().forEach(sess => {
+    const dt = new Date(sess.date);
+    const fechaStr = dt.toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
+    const exSummary = (sess.exercises || []).map(e => {
+      const liveEx = getExerciseById(e.exerciseId);
+      const displayName = liveEx && liveEx.name ? liveEx.name : e.name;
+      const setsStr = (e.sets || []).map(s => `${s.weight || 0}kg×${s.reps || 0}`).join(", ");
+      return `<div class="muted">• <strong>${escapeHtml(displayName)}</strong>: ${escapeHtml(setsStr)}</div>`;
+    }).join("");
+
+    const box = document.createElement("div");
+    box.className = "history-item";
+    box.innerHTML = `
+      <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:4px;">
+        <span>${escapeHtml(sess.dayName)}</span>
+        <span class="muted">${fechaStr} · ${formatTime(sess.durationSec || 0)}</span>
+      </div>
+      ${exSummary}
+    `;
+    list.appendChild(box);
+  });
+}
+
+function exportBackupJSON() {
+  const payload = {
+    version: "3.2",
+    exportedAt: new Date().toISOString(),
+    catalog,
+    routine,
+    history: historyData,
+    drafts
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `ironlog-v3.2-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importBackupJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (Array.isArray(data.catalog)) {
+        catalog = data.catalog;
+        saveJSON(STORAGE_KEYS.CATALOG, catalog);
+      }
+      if (data.routine && typeof data.routine === "object") {
+        routine = data.routine;
+        saveJSON(STORAGE_KEYS.ROUTINE, routine);
+      }
+      if (Array.isArray(data.history)) {
+        historyData = data.history;
+        saveJSON(STORAGE_KEYS.HISTORY, historyData);
+      }
+      if (data.drafts && typeof data.drafts === "object") {
+        drafts = data.drafts;
+        saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+      }
+      renderWorkout();
+      renderDatabaseTab();
+      renderHistoryTab();
+      alert("Copia importada correctamente.");
+    } catch (err) {
+      alert("El archivo JSON no es válido.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function switchTab(tab) {
+  document.getElementById("viewWorkout").classList.toggle("hidden", tab !== "workout");
+  document.getElementById("viewCatalog").classList.toggle("hidden", tab !== "catalog");
+  document.getElementById("viewHistory").classList.toggle("hidden", tab !== "history");
+  document.getElementById("viewBackup").classList.toggle("hidden", tab !== "backup");
+
+  document.getElementById("navWorkout").classList.toggle("active", tab === "workout");
+  document.getElementById("navCatalog").classList.toggle("active", tab === "catalog");
+  document.getElementById("navHistory").classList.toggle("active", tab === "history");
+  document.getElementById("navBackup").classList.toggle("active", tab === "backup");
+
+  if (tab === "catalog") renderDatabaseTab();
+  if (tab === "history") renderHistoryTab();
+}
+
+function escapeHtml(str) {
+  return String(str || "")
+    .replace(/&/g, "&")
+    .replace(/</g, "<")
+    .replace(/>/g, ">")
+    .replace(/"/g, """);
+}
+
+updateSessionTimerUI();
+renderWorkout();
+</script>
+</body>
+</html>
