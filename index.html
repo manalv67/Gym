@@ -24,10 +24,7 @@
     --radius: 14px;
   }
 
-  * {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   body {
     margin: 0;
@@ -38,382 +35,102 @@
     line-height: 1.35;
   }
 
-  .app-shell {
-    max-width: 680px;
-    margin: 0 auto;
-  }
+  .app-shell { max-width: 680px; margin: 0 auto; }
 
   .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    background: rgba(11, 13, 18, 0.92);
-    backdrop-filter: blur(12px);
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(11, 13, 18, 0.92); backdrop-filter: blur(12px);
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
   }
 
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 700;
-    font-size: 1.05rem;
-  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.05rem; }
 
   .version-badge {
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 999px;
-    background: var(--accent-bg);
-    color: var(--accent);
-    border: 1px solid rgba(56, 189, 248, 0.35);
+    font-size: 0.72rem; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+    background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.35);
   }
 
   .timer-box {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 5px 8px;
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 5px 8px;
   }
 
-  .timer-display {
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
-    font-size: 0.95rem;
-    min-width: 48px;
-    text-align: center;
-  }
+  .timer-display { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 0.95rem; min-width: 48px; text-align: center; }
 
   button {
-    font: inherit;
-    color: inherit;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 9px;
-    padding: 6px 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
+    font: inherit; color: inherit; background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 9px; padding: 6px 10px;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer;
   }
+  button:active { transform: scale(0.98); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  button:active {
-    transform: scale(0.98);
-  }
+  .btn-accent { background: var(--accent); color: #061018; border-color: var(--accent); }
+  .btn-warn { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border-color: rgba(245, 158, 11, 0.45); }
+  .btn-ok { background: rgba(34, 197, 94, 0.18); color: #4ade80; border-color: rgba(34, 197, 94, 0.45); }
+  .btn-danger { background: rgba(239, 68, 68, 0.16); color: #f87171; border-color: rgba(239, 68, 68, 0.4); }
+  .btn-sm { padding: 4px 8px; font-size: 0.78rem; }
 
-  button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+  .day-strip { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 6px 0; scrollbar-width: none; }
+  .day-strip::-webkit-scrollbar { display: none; }
+  .day-pill { flex: 0 0 auto; padding: 7px 11px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; font-weight: 600; }
+  .day-pill.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); }
 
-  .btn-accent {
-    background: var(--accent);
-    color: #061018;
-    border-color: var(--accent);
-  }
+  .session-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 8px 0 12px 0; }
+  .session-title { margin: 0; font-size: 1.15rem; }
+  .session-sub { color: var(--muted); font-size: 0.82rem; }
 
-  .btn-warn {
-    background: rgba(245, 158, 11, 0.18);
-    color: #fbbf24;
-    border-color: rgba(245, 158, 11, 0.45);
-  }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; }
+  .ex-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+  .ex-name { font-weight: 700; font-size: 0.98rem; }
+  .ex-meta { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+  .ex-controls { display: flex; gap: 4px; flex-shrink: 0; }
 
-  .btn-ok {
-    background: rgba(34, 197, 94, 0.18);
-    color: #4ade80;
-    border-color: rgba(34, 197, 94, 0.45);
-  }
+  .sets-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  .sets-table th { color: var(--muted); font-weight: 600; font-size: 0.74rem; text-align: left; padding: 0 4px 6px 4px; }
+  .sets-table td { padding: 4px; vertical-align: middle; }
+  .prev-tag { color: var(--muted); font-size: 0.76rem; white-space: nowrap; }
 
-  .btn-danger {
-    background: rgba(239, 68, 68, 0.16);
-    color: #f87171;
-    border-color: rgba(239, 68, 68, 0.4);
+  input[type="number"], input[type="text"], select {
+    width: 100%; background: var(--surface-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px; padding: 7px 8px; font-size: 0.88rem;
   }
+  input[type="number"] { text-align: center; font-variant-numeric: tabular-nums; }
 
-  .btn-sm {
-    padding: 4px 8px;
-    font-size: 0.78rem;
-  }
+  .set-check { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; }
+  .set-check.done { background: var(--ok); color: #052e16; border-color: var(--ok); }
 
-  .day-strip {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 10px 0 6px 0;
-    scrollbar-width: none;
-  }
-
-  .day-strip::-webkit-scrollbar {
-    display: none;
-  }
-
-  .day-pill {
-    flex: 0 0 auto;
-    padding: 7px 11px;
-    border-radius: 999px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-
-  .day-pill.active {
-    background: var(--accent-bg);
-    color: var(--accent);
-    border-color: var(--accent);
-  }
-
-  .session-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    margin: 8px 0 12px 0;
-  }
-
-  .session-title {
-    margin: 0;
-    font-size: 1.15rem;
-  }
-
-  .session-sub {
-    color: var(--muted);
-    font-size: 0.82rem;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px;
-    margin-bottom: 12px;
-  }
-
-  .ex-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  .ex-name {
-    font-weight: 700;
-    font-size: 0.98rem;
-  }
-
-  .ex-meta {
-    font-size: 0.76rem;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-
-  .ex-controls {
-    display: flex;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-
-  .sets-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.84rem;
-  }
-
-  .sets-table th {
-    color: var(--muted);
-    font-weight: 600;
-    font-size: 0.74rem;
-    text-align: left;
-    padding: 0 4px 6px 4px;
-  }
-
-  .sets-table td {
-    padding: 4px;
-    vertical-align: middle;
-  }
-
-  .prev-tag {
-    color: var(--muted);
-    font-size: 0.76rem;
-    white-space: nowrap;
-  }
-
-  input[type="number"],
-  input[type="text"],
-  select {
-    width: 100%;
-    background: var(--surface-2);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 7px 8px;
-    font-size: 0.88rem;
-  }
-
-  input[type="number"] {
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .set-check {
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-  }
-
-  .set-check.done {
-    background: var(--ok);
-    color: #052e16;
-    border-color: var(--ok);
-  }
-
-  .ex-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-  }
+  .ex-footer { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
 
   .rest-banner {
-    position: fixed;
-    left: 12px;
-    right: 12px;
-    bottom: calc(68px + env(safe-area-inset-bottom));
-    max-width: 656px;
-    margin: 0 auto;
-    z-index: 30;
-    background: #0f2942;
-    border: 1px solid var(--accent);
-    border-radius: 12px;
-    padding: 10px 12px;
-    display: none;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    position: fixed; left: 12px; right: 12px; bottom: calc(68px + env(safe-area-inset-bottom));
+    max-width: 656px; margin: 0 auto; z-index: 30;
+    background: #0f2942; border: 1px solid var(--accent); border-radius: 12px;
+    padding: 10px 12px; display: none; align-items: center; justify-content: space-between; gap: 10px;
   }
-
-  .rest-banner.show {
-    display: flex;
-  }
+  .rest-banner.show { display: flex; }
 
   .bottom-nav {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 25;
-    background: rgba(11, 13, 18, 0.96);
-    backdrop-filter: blur(12px);
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-around;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 25;
+    background: rgba(11, 13, 18, 0.96); backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border); display: flex; justify-content: space-around;
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom)) 8px;
   }
+  .nav-btn { flex: 1; background: transparent; border: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.72rem; padding: 4px; }
+  .nav-btn.active { color: var(--accent); }
 
-  .nav-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--muted);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    font-size: 0.72rem;
-    padding: 4px;
-  }
+  .modal-backdrop { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, 0.72); display: none; align-items: flex-end; justify-content: center; }
+  .modal-backdrop.open { display: flex; }
+  .modal-sheet { width: 100%; max-width: 680px; max-height: 86vh; overflow-y: auto; background: var(--surface); border-top-left-radius: 18px; border-top-right-radius: 18px; border: 1px solid var(--border); padding: 14px; }
 
-  .nav-btn.active {
-    color: var(--accent);
-  }
-
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    background: rgba(0, 0, 0, 0.72);
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
-  }
-
-  .modal-backdrop.open {
-    display: flex;
-  }
-
-  .modal-sheet {
-    width: 100%;
-    max-width: 680px;
-    max-height: 86vh;
-    overflow-y: auto;
-    background: var(--surface);
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
-    border: 1px solid var(--border);
-    padding: 14px;
-  }
-
-  .catalog-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 10px;
-    border-radius: 10px;
-    background: var(--surface-2);
-    margin-bottom: 6px;
-  }
-
-  .history-item {
-    padding: 10px;
-    border-radius: 10px;
-    background: var(--surface-2);
-    margin-bottom: 8px;
-  }
-
-  .field-label {
-    display: block;
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-
-  .field-group {
-    margin-bottom: 10px;
-  }
-
-  .muted {
-    color: var(--muted);
-    font-size: 0.82rem;
-  }
-
-  .row-gap {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .hidden {
-    display: none !important;
-  }
+  .catalog-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; background: var(--surface-2); margin-bottom: 6px; }
+  .history-item { padding: 10px; border-radius: 10px; background: var(--surface-2); margin-bottom: 8px; }
+  .field-label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; }
+  .field-group { margin-bottom: 10px; }
+  .muted { color: var(--muted); font-size: 0.82rem; }
+  .row-gap { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
@@ -434,7 +151,6 @@
 
   <main id="viewWorkout">
     <div id="dayStrip" class="day-strip"></div>
-
     <div class="session-header">
       <div>
         <h1 id="sessionTitle" class="session-title">Día 1 · Pecho</h1>
@@ -442,9 +158,7 @@
       </div>
       <button class="btn-ok" onclick="saveWorkoutSession()">Guardar sesión</button>
     </div>
-
     <div id="exerciseList"></div>
-
     <div class="row-gap" style="margin-top: 8px;">
       <button class="btn-accent" style="flex: 1;" onclick="openCatalogModal()">+ Añadir ejercicio</button>
       <button onclick="resetDayOrder()">Restaurar orden</button>
@@ -454,7 +168,6 @@
   <main id="viewCatalog" class="hidden">
     <h2 style="margin: 12px 0 6px 0;">Base de datos de ejercicios</h2>
     <p class="muted" style="margin-top: 0;">Crea, edita o filtra ejercicios. Sus series y pesos quedan guardados cada vez que los registres.</p>
-
     <div class="card">
       <div style="font-weight: 700; margin-bottom: 8px;">Crear nuevo ejercicio</div>
       <div class="row-gap" style="margin-bottom: 8px;">
@@ -474,7 +187,6 @@
         <button class="btn-accent" onclick="createCustomExercise()">Guardar en BD</button>
       </div>
     </div>
-
     <div class="row-gap" style="margin-bottom: 10px;">
       <input id="dbSearchInput" type="text" placeholder="Buscar ejercicio en la base de datos..." oninput="renderDatabaseTab()" style="flex: 2;">
       <select id="dbGroupFilter" onchange="renderDatabaseTab()" style="flex: 1; max-width: 150px;">
@@ -488,7 +200,6 @@
         <option value="Core">Core</option>
       </select>
     </div>
-
     <div id="databaseList"></div>
   </main>
 
@@ -523,18 +234,10 @@
   </div>
 
   <nav class="bottom-nav">
-    <button id="navWorkout" class="nav-btn active" onclick="switchTab('workout')">
-      <span>Rutina</span>
-    </button>
-    <button id="navCatalog" class="nav-btn" onclick="switchTab('catalog')">
-      <span>Base datos</span>
-    </button>
-    <button id="navHistory" class="nav-btn" onclick="switchTab('history')">
-      <span>Historial</span>
-    </button>
-    <button id="navBackup" class="nav-btn" onclick="switchTab('backup')">
-      <span>Copia</span>
-    </button>
+    <button id="navWorkout" class="nav-btn active" onclick="switchTab('workout')"><span>Rutina</span></button>
+    <button id="navCatalog" class="nav-btn" onclick="switchTab('catalog')"><span>Base datos</span></button>
+    <button id="navHistory" class="nav-btn" onclick="switchTab('history')"><span>Historial</span></button>
+    <button id="navBackup" class="nav-btn" onclick="switchTab('backup')"><span>Copia</span></button>
   </nav>
 </div>
 
@@ -597,7 +300,6 @@
     </div>
   </div>
 </div>
-
 <script>
 const STORAGE_KEYS = {
   CATALOG: "ironlog_v3_catalog",
@@ -608,14 +310,12 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_CATALOG = [
-  // Pecho
   { id: "pecho_press_banca", name: "Press banca plano con barra", group: "Pecho", equip: "Barra", restSec: 120 },
   { id: "pecho_press_inc_manc", name: "Press inclinado con mancuernas", group: "Pecho", equip: "Mancuernas", restSec: 105 },
   { id: "pecho_press_inc_maq", name: "Press inclinado en máquina", group: "Pecho", equip: "Máquina", restSec: 90 },
   { id: "pecho_contractor", name: "Contractor / Peck Deck", group: "Pecho", equip: "Máquina", restSec: 75 },
   { id: "pecho_cruces_polea", name: "Cruces en polea", group: "Pecho", equip: "Polea", restSec: 75 },
   { id: "pecho_fondos", name: "Fondos en paralelas (pecho)", group: "Pecho", equip: "Peso corporal / Lastre", restSec: 90 },
-  // Espalda
   { id: "espalda_jalon_pecho", name: "Jalón al pecho en polea", group: "Espalda", equip: "Polea", restSec: 90 },
   { id: "espalda_remo_gironda", name: "Remo en polea baja (Gironda)", group: "Espalda", equip: "Polea", restSec: 90 },
   { id: "espalda_remo_barra", name: "Remo con barra", group: "Espalda", equip: "Barra", restSec: 120 },
@@ -623,7 +323,6 @@ const DEFAULT_CATALOG = [
   { id: "espalda_remo_maq", name: "Remo en máquina / Chest Supported", group: "Espalda", equip: "Máquina", restSec: 90 },
   { id: "espalda_pullover", name: "Pullover en polea alta", group: "Espalda", equip: "Polea", restSec: 75 },
   { id: "espalda_dominadas", name: "Dominadas / Asistidas", group: "Espalda", equip: "Barra / Máquina", restSec: 105 },
-  // Pierna
   { id: "pierna_sentadilla", name: "Sentadilla con barra / Multipower", group: "Pierna", equip: "Barra / Multipower", restSec: 150 },
   { id: "pierna_prensa", name: "Prensa inclinada / horizontal", group: "Pierna", equip: "Máquina", restSec: 120 },
   { id: "pierna_extension", name: "Extensión de cuádriceps", group: "Pierna", equip: "Máquina", restSec: 75 },
@@ -634,23 +333,19 @@ const DEFAULT_CATALOG = [
   { id: "pierna_gemelo_sentado", name: "Gemelo sentado", group: "Pierna", equip: "Máquina", restSec: 60 },
   { id: "pierna_aductor", name: "Aductor en máquina", group: "Pierna", equip: "Máquina", restSec: 60 },
   { id: "pierna_abductor", name: "Abductor en máquina", group: "Pierna", equip: "Máquina", restSec: 60 },
-  // Hombro
   { id: "hombro_press_manc", name: "Press militar con mancuernas", group: "Hombro", equip: "Mancuernas", restSec: 105 },
   { id: "hombro_press_maq", name: "Press de hombros en máquina", group: "Hombro", equip: "Máquina", restSec: 90 },
   { id: "hombro_laterales_manc", name: "Elevaciones laterales con mancuernas", group: "Hombro", equip: "Mancuernas", restSec: 60 },
   { id: "hombro_laterales_polea", name: "Elevaciones laterales en polea", group: "Hombro", equip: "Polea", restSec: 60 },
   { id: "hombro_pajaro", name: "Pájaros / Posterior en máquina", group: "Hombro", equip: "Máquina / Mancuernas", restSec: 75 },
-  // Bíceps
   { id: "biceps_curl_barra", name: "Curl con barra / EZ", group: "Bíceps", equip: "Barra EZ", restSec: 75 },
   { id: "biceps_curl_manc", name: "Curl con mancuernas", group: "Bíceps", equip: "Mancuernas", restSec: 75 },
   { id: "biceps_martillo", name: "Curl martillo", group: "Bíceps", equip: "Mancuernas / Cuerda", restSec: 75 },
   { id: "biceps_predicador", name: "Curl en banco Scott / Predicador", group: "Bíceps", equip: "Máquina / Barra", restSec: 75 },
-  // Tríceps
   { id: "triceps_polea_cuerda", name: "Extensión de tríceps en polea (cuerda)", group: "Tríceps", equip: "Polea", restSec: 60 },
   { id: "triceps_press_frances", name: "Press francés / Rompecráneos", group: "Tríceps", equip: "Barra EZ / Mancuernas", restSec: 75 },
   { id: "triceps_copa", name: "Extensión tras nuca / Copa", group: "Tríceps", equip: "Mancuerna / Polea", restSec: 75 },
   { id: "triceps_fondos_maq", name: "Fondos en máquina / Paralelas tríceps", group: "Tríceps", equip: "Máquina / Paralelas", restSec: 75 },
-  // Core
   { id: "core_crunch_polea", name: "Crunch abdominal en polea", group: "Core", equip: "Polea", restSec: 60 },
   { id: "core_elev_piernas", name: "Elevación de piernas", group: "Core", equip: "Soporte / Banco", restSec: 60 }
 ];
@@ -665,22 +360,12 @@ const DEFAULT_ROUTINE = {
   7: { name: "Día 7 · Extra / Descanso activo", subtitle: "Sesión ligera opcional o recuperación", exercises: ["pierna_extension", "pierna_femoral_tumbado", "core_crunch_polea"] }
 };
 
-function cloneData(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
-
+function cloneData(obj) { return JSON.parse(JSON.stringify(obj)); }
 function loadJSON(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : cloneData(fallback);
-  } catch (e) {
-    return cloneData(fallback);
-  }
+  try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : cloneData(fallback); }
+  catch (e) { return cloneData(fallback); }
 }
-
-function saveJSON(key, val) {
-  localStorage.setItem(key, JSON.stringify(val));
-}
+function saveJSON(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 
 let catalog = loadJSON(STORAGE_KEYS.CATALOG, DEFAULT_CATALOG);
 let routine = loadJSON(STORAGE_KEYS.ROUTINE, DEFAULT_ROUTINE);
@@ -689,22 +374,13 @@ let activeDay = Number(localStorage.getItem(STORAGE_KEYS.ACTIVE_DAY) || 1);
 let drafts = loadJSON(STORAGE_KEYS.ACTIVE_DRAFT, {});
 
 function getExerciseById(id) {
-  return catalog.find(item => item.id === id) || {
-    id,
-    name: id,
-    group: "General",
-    equip: "",
-    restSec: 90
-  };
+  return catalog.find(item => item.id === id) || { id, name: id, group: "General", equip: "", restSec: 90 };
 }
 
 function getLastSetsForExercise(exId) {
   for (let i = historyData.length - 1; i >= 0; i--) {
-    const session = historyData[i];
-    const found = (session.exercises || []).find(e => e.exerciseId === exId);
-    if (found && Array.isArray(found.sets) && found.sets.length > 0) {
-      return found.sets;
-    }
+    const found = (historyData[i].exercises || []).find(e => e.exerciseId === exId);
+    if (found && Array.isArray(found.sets) && found.sets.length > 0) return found.sets;
   }
   return null;
 }
@@ -712,46 +388,32 @@ function getLastSetsForExercise(exId) {
 function ensureDayDraft(dayNum) {
   if (!drafts[dayNum]) {
     const dayExIds = (routine[dayNum] && routine[dayNum].exercises) ? routine[dayNum].exercises : [];
-    drafts[dayNum] = {
-      order: [...dayExIds],
-      setsByEx: {}
-    };
+    drafts[dayNum] = { order: [...dayExIds], setsByEx: {} };
   }
   const draft = drafts[dayNum];
   for (const exId of draft.order) {
     if (!draft.setsByEx[exId] || draft.setsByEx[exId].length === 0) {
       const prev = getLastSetsForExercise(exId);
       const count = prev ? prev.length : 3;
-      draft.setsByEx[exId] = Array.from({ length: count }, () => ({
-        weight: "",
-        reps: "",
-        done: false
-      }));
+      draft.setsByEx[exId] = Array.from({ length: count }, () => ({ weight: "", reps: "", done: false }));
     }
   }
   saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
   return draft;
 }
 
-// Editar ejercicio existente (nombre, grupo, equipo) conservando su ID e historial
 function openEditExerciseModal(exId) {
   const ex = getExerciseById(exId);
   document.getElementById("editExId").value = ex.id;
   document.getElementById("editExName").value = ex.name || "";
   const groupSel = document.getElementById("editExGroup");
-  const hasOption = Array.from(groupSel.options).some(opt => opt.value === ex.group);
-  groupSel.value = hasOption ? ex.group : "General";
+  groupSel.value = Array.from(groupSel.options).some(opt => opt.value === ex.group) ? ex.group : "General";
   document.getElementById("editExEquip").value = ex.equip || "";
   document.getElementById("editExerciseModal").classList.add("open");
 }
 
-function closeEditExerciseModal() {
-  document.getElementById("editExerciseModal").classList.remove("open");
-}
-
-function closeEditExerciseModalOnBackdrop(e) {
-  if (e.target.id === "editExerciseModal") closeEditExerciseModal();
-}
+function closeEditExerciseModal() { document.getElementById("editExerciseModal").classList.remove("open"); }
+function closeEditExerciseModalOnBackdrop(e) { if (e.target.id === "editExerciseModal") closeEditExerciseModal(); }
 
 function saveEditedExercise() {
   const exId = document.getElementById("editExId").value;
@@ -761,143 +423,58 @@ function saveEditedExercise() {
   if (!exId || !newName) return;
 
   const idx = catalog.findIndex(item => item.id === exId);
-  if (idx >= 0) {
-    catalog[idx] = {
-      ...catalog[idx],
-      name: newName,
-      group: newGroup,
-      equip: newEquip
-    };
-  } else {
-    catalog.unshift({
-      id: exId,
-      name: newName,
-      group: newGroup,
-      equip: newEquip,
-      restSec: 90
-    });
-  }
+  if (idx >= 0) catalog[idx] = { ...catalog[idx], name: newName, group: newGroup, equip: newEquip };
+  else catalog.unshift({ id: exId, name: newName, group: newGroup, equip: newEquip, restSec: 90 });
 
   historyData.forEach(sess => {
     (sess.exercises || []).forEach(entry => {
-      if (entry.exerciseId === exId) {
-        entry.name = newName;
-        entry.group = newGroup;
-      }
+      if (entry.exerciseId === exId) { entry.name = newName; entry.group = newGroup; }
     });
   });
 
   saveJSON(STORAGE_KEYS.CATALOG, catalog);
   saveJSON(STORAGE_KEYS.HISTORY, historyData);
   closeEditExerciseModal();
-  renderWorkout();
-  renderDatabaseTab();
-  renderHistoryTab();
+  renderWorkout(); renderDatabaseTab(); renderHistoryTab();
 }
 
-// Cronómetro manual de sesión (arranca detenido)
-let sessionSeconds = 0;
-let sessionInterval = null;
-let sessionState = "idle";
-
+let sessionSeconds = 0, sessionInterval = null, sessionState = "idle";
 function formatTime(sec) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
 }
-
 function updateSessionTimerUI() {
   document.getElementById("sessionTimerDisplay").textContent = formatTime(sessionSeconds);
-  const btnStart = document.getElementById("sessionTimerToggleBtn");
-  const btnPause = document.getElementById("sessionTimerPauseBtn");
-  const btnResume = document.getElementById("sessionTimerResumeBtn");
-
-  btnStart.classList.toggle("hidden", sessionState !== "idle");
-  btnPause.classList.toggle("hidden", sessionState !== "running");
-  btnResume.classList.toggle("hidden", sessionState !== "paused");
+  document.getElementById("sessionTimerToggleBtn").classList.toggle("hidden", sessionState !== "idle");
+  document.getElementById("sessionTimerPauseBtn").classList.toggle("hidden", sessionState !== "running");
+  document.getElementById("sessionTimerResumeBtn").classList.toggle("hidden", sessionState !== "paused");
 }
-
-function toggleSessionTimer() {
-  if (sessionState === "idle") {
-    resumeSessionTimer();
-  }
-}
-
-function pauseSessionTimer() {
-  clearInterval(sessionInterval);
-  sessionInterval = null;
-  sessionState = "paused";
-  updateSessionTimerUI();
-}
-
+function toggleSessionTimer() { if (sessionState === "idle") resumeSessionTimer(); }
+function pauseSessionTimer() { clearInterval(sessionInterval); sessionInterval = null; sessionState = "paused"; updateSessionTimerUI(); }
 function resumeSessionTimer() {
-  clearInterval(sessionInterval);
-  sessionState = "running";
-  updateSessionTimerUI();
-  sessionInterval = setInterval(() => {
-    sessionSeconds += 1;
-    updateSessionTimerUI();
-  }, 1000);
+  clearInterval(sessionInterval); sessionState = "running"; updateSessionTimerUI();
+  sessionInterval = setInterval(() => { sessionSeconds += 1; updateSessionTimerUI(); }, 1000);
 }
+function resetSessionTimer() { clearInterval(sessionInterval); sessionInterval = null; sessionSeconds = 0; sessionState = "idle"; updateSessionTimerUI(); }
 
-function resetSessionTimer() {
-  clearInterval(sessionInterval);
-  sessionInterval = null;
-  sessionSeconds = 0;
-  sessionState = "idle";
-  updateSessionTimerUI();
-}
-
-// Temporizador de descanso entre series
-let restRemaining = 0;
-let restInterval = null;
-
+let restRemaining = 0, restInterval = null;
 function startRestTimer(seconds) {
-  clearInterval(restInterval);
-  restRemaining = seconds || 90;
-  document.getElementById("restBanner").classList.add("show");
-  updateRestText();
-  restInterval = setInterval(() => {
-    restRemaining -= 1;
-    if (restRemaining <= 0) {
-      stopRestTimer();
-    } else {
-      updateRestText();
-    }
-  }, 1000);
+  clearInterval(restInterval); restRemaining = seconds || 90;
+  document.getElementById("restBanner").classList.add("show"); updateRestText();
+  restInterval = setInterval(() => { restRemaining -= 1; if (restRemaining <= 0) stopRestTimer(); else updateRestText(); }, 1000);
 }
+function addRestSeconds(sec) { restRemaining = Math.max(0, restRemaining + sec); updateRestText(); }
+function stopRestTimer() { clearInterval(restInterval); restInterval = null; restRemaining = 0; document.getElementById("restBanner").classList.remove("show"); }
+function updateRestText() { document.getElementById("restCountdownText").textContent = formatTime(restRemaining); }
 
-function addRestSeconds(sec) {
-  restRemaining = Math.max(0, restRemaining + sec);
-  updateRestText();
-}
-
-function stopRestTimer() {
-  clearInterval(restInterval);
-  restInterval = null;
-  restRemaining = 0;
-  document.getElementById("restBanner").classList.remove("show");
-}
-
-function updateRestText() {
-  document.getElementById("restCountdownText").textContent = formatTime(restRemaining);
-}
-
-// Renderizado de la rutina del día
 function renderDayStrip() {
-  const strip = document.getElementById("dayStrip");
-  strip.innerHTML = "";
+  const strip = document.getElementById("dayStrip"); strip.innerHTML = "";
   for (let d = 1; d <= 7; d++) {
     const info = routine[d];
     const btn = document.createElement("button");
     btn.className = "day-pill" + (d === activeDay ? " active" : "");
     btn.textContent = d === 7 ? "Día 7 · Extra" : `Día ${d}`;
     btn.title = info ? info.name : `Día ${d}`;
-    btn.onclick = () => {
-      activeDay = d;
-      localStorage.setItem(STORAGE_KEYS.ACTIVE_DAY, String(d));
-      renderWorkout();
-    };
+    btn.onclick = () => { activeDay = d; localStorage.setItem(STORAGE_KEYS.ACTIVE_DAY, String(d)); renderWorkout(); };
     strip.appendChild(btn);
   }
 }
@@ -907,311 +484,139 @@ function renderWorkout() {
   const dayInfo = routine[activeDay] || { name: `Día ${activeDay}`, subtitle: "" };
   document.getElementById("sessionTitle").textContent = dayInfo.name;
   document.getElementById("sessionSub").textContent = dayInfo.subtitle;
-
   const draft = ensureDayDraft(activeDay);
   const prevMap = {};
-  for (const exId of draft.order) {
-    prevMap[exId] = getLastSetsForExercise(exId);
-  }
+  for (const exId of draft.order) prevMap[exId] = getLastSetsForExercise(exId);
 
-  const container = document.getElementById("exerciseList");
-  container.innerHTML = "";
-
+  const container = document.getElementById("exerciseList"); container.innerHTML = "";
   draft.order.forEach((exId, idx) => {
     const ex = getExerciseById(exId);
     const sets = draft.setsByEx[exId] || [];
     const prevSets = prevMap[exId] || [];
-
-    const card = document.createElement("div");
-    card.className = "card";
+    const card = document.createElement("div"); card.className = "card";
 
     let rowsHtml = "";
     sets.forEach((s, sIdx) => {
       const p = prevSets[sIdx];
-      const prevLabel = (p && (p.weight !== "" || p.reps !== ""))
-        ? `${p.weight || 0} kg × ${p.reps || 0}`
-        : "—";
-
-      rowsHtml += `
-        <tr>
-          <td style="font-weight:700; width:28px;">${sIdx + 1}</td>
-          <td><span class="prev-tag">${prevLabel}</span></td>
-          <td><input type="number" step="0.5" min="0" placeholder="kg" value="${s.weight}" onchange="updateSetField('${exId}', ${sIdx}, 'weight', this.value)"></td>
-          <td><input type="number" step="1" min="0" placeholder="reps" value="${s.reps}" onchange="updateSetField('${exId}', ${sIdx}, 'reps', this.value)"></td>
-          <td style="text-align:right; width:40px;">
-            <button class="set-check ${s.done ? "done" : ""}" onclick="toggleSetDone('${exId}', ${sIdx}, ${ex.restSec || 90})">✓</button>
-          </td>
-        </tr>
-      `;
+      const prevLabel = (p && (p.weight !== "" || p.reps !== "")) ? `${p.weight || 0} kg × ${p.reps || 0}` : "—";
+      rowsHtml += `<tr>
+        <td style="font-weight:700; width:28px;">${sIdx + 1}</td>
+        <td><span class="prev-tag">${prevLabel}</span></td>
+        <td><input type="number" step="0.5" min="0" placeholder="kg" value="${s.weight}" onchange="updateSetField('${exId}', ${sIdx}, 'weight', this.value)"></td>
+        <td><input type="number" step="1" min="0" placeholder="reps" value="${s.reps}" onchange="updateSetField('${exId}', ${sIdx}, 'reps', this.value)"></td>
+        <td style="text-align:right; width:40px;"><button class="set-check ${s.done ? "done" : ""}" onclick="toggleSetDone('${exId}', ${sIdx}, ${ex.restSec || 90})">✓</button></td>
+      </tr>`;
     });
 
-    card.innerHTML = `
-      <div class="ex-top">
-        <div>
-          <div class="ex-name">${escapeHtml(ex.name)}</div>
-          <div class="ex-meta">${escapeHtml(ex.group)}${ex.equip ? " · " + escapeHtml(ex.equip) : ""}</div>
-        </div>
-        <div class="ex-controls">
-          <button class="btn-sm" onclick="openEditExerciseModal('${exId}')" title="Editar nombre/grupo/equipo">✎</button>
-          <button class="btn-sm" onclick="moveExercise(${idx}, -1)" ${idx === 0 ? "disabled" : ""} title="Subir">▲</button>
-          <button class="btn-sm" onclick="moveExercise(${idx}, 1)" ${idx === draft.order.length - 1 ? "disabled" : ""} title="Bajar">▼</button>
-          <button class="btn-sm btn-danger" onclick="removeExerciseFromDay('${exId}')" title="Quitar">✕</button>
-        </div>
+    card.innerHTML = `<div class="ex-top">
+      <div><div class="ex-name">${escapeHtml(ex.name)}</div><div class="ex-meta">${escapeHtml(ex.group)}${ex.equip ? " · " + escapeHtml(ex.equip) : ""}</div></div>
+      <div class="ex-controls">
+        <button class="btn-sm" onclick="openEditExerciseModal('${exId}')" title="Editar">✎</button>
+        <button class="btn-sm" onclick="moveExercise(${idx}, -1)" ${idx === 0 ? "disabled" : ""} title="Subir">▲</button>
+        <button class="btn-sm" onclick="moveExercise(${idx}, 1)" ${idx === draft.order.length - 1 ? "disabled" : ""} title="Bajar">▼</button>
+        <button class="btn-sm btn-danger" onclick="removeExerciseFromDay('${exId}')" title="Quitar">✕</button>
       </div>
-      <table class="sets-table">
-        <thead>
-          <tr>
-            <th>Serie</th>
-            <th>Anterior</th>
-            <th>Peso (kg)</th>
-            <th>Reps</th>
-            <th style="text-align:right;">Hecho</th>
-          </tr>
-        </thead>
-        <tbody>${rowsHtml}</tbody>
-      </table>
-      <div class="ex-footer">
-        <div class="row-gap">
-          <button class="btn-sm" onclick="addSetToExercise('${exId}')">+ Serie</button>
-          <button class="btn-sm" onclick="removeLastSet('${exId}')">- Serie</button>
-        </div>
-        <button class="btn-sm" onclick="fillPrevWeights('${exId}')">Copiar anterior</button>
-      </div>
-    `;
+    </div>
+    <table class="sets-table"><thead><tr><th>Serie</th><th>Anterior</th><th>Peso (kg)</th><th>Reps</th><th style="text-align:right;">Hecho</th></tr></thead><tbody>${rowsHtml}</tbody></table>
+    <div class="ex-footer">
+      <div class="row-gap"><button class="btn-sm" onclick="addSetToExercise('${exId}')">+ Serie</button><button class="btn-sm" onclick="removeLastSet('${exId}')">- Serie</button></div>
+      <button class="btn-sm" onclick="fillPrevWeights('${exId}')">Copiar anterior</button>
+    </div>`;
     container.appendChild(card);
   });
 }
 
 function updateSetField(exId, setIdx, field, val) {
   const draft = ensureDayDraft(activeDay);
-  if (!draft.setsByEx[exId] || !draft.setsByEx[exId][setIdx]) return;
-  draft.setsByEx[exId][setIdx][field] = val;
-  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+  if (draft.setsByEx[exId] && draft.setsByEx[exId][setIdx]) { draft.setsByEx[exId][setIdx][field] = val; saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts); }
 }
-
 function toggleSetDone(exId, setIdx, restSec) {
-  const draft = ensureDayDraft(activeDay);
-  const s = draft.setsByEx[exId][setIdx];
-  s.done = !s.done;
-  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
-  renderWorkout();
-  if (s.done) {
-    startRestTimer(restSec);
-  }
+  const draft = ensureDayDraft(activeDay); const s = draft.setsByEx[exId][setIdx]; s.done = !s.done;
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts); renderWorkout(); if (s.done) startRestTimer(restSec);
 }
-
-function addSetToExercise(exId) {
-  const draft = ensureDayDraft(activeDay);
-  draft.setsByEx[exId].push({ weight: "", reps: "", done: false });
-  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
-  renderWorkout();
-}
-
-function removeLastSet(exId) {
-  const draft = ensureDayDraft(activeDay);
-  if (draft.setsByEx[exId].length > 1) {
-    draft.setsByEx[exId].pop();
-    saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
-    renderWorkout();
-  }
-}
-
+function addSetToExercise(exId) { const draft = ensureDayDraft(activeDay); draft.setsByEx[exId].push({ weight: "", reps: "", done: false }); saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts); renderWorkout(); }
+function removeLastSet(exId) { const draft = ensureDayDraft(activeDay); if (draft.setsByEx[exId].length > 1) { draft.setsByEx[exId].pop(); saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts); renderWorkout(); } }
 function fillPrevWeights(exId) {
-  const prev = getLastSetsForExercise(exId);
-  if (!prev) return;
-  const draft = ensureDayDraft(activeDay);
-  draft.setsByEx[exId].forEach((s, i) => {
-    if (prev[i]) {
-      if (prev[i].weight !== "") s.weight = prev[i].weight;
-      if (prev[i].reps !== "") s.reps = prev[i].reps;
-    }
-  });
-  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
-  renderWorkout();
+  const prev = getLastSetsForExercise(exId); if (!prev) return; const draft = ensureDayDraft(activeDay);
+  draft.setsByEx[exId].forEach((s, i) => { if (prev[i]) { if (prev[i].weight !== "") s.weight = prev[i].weight; if (prev[i].reps !== "") s.reps = prev[i].reps; } });
+  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts); renderWorkout();
 }
-
 function moveExercise(index, delta) {
-  const draft = ensureDayDraft(activeDay);
-  const target = index + delta;
+  const draft = ensureDayDraft(activeDay); const target = index + delta;
   if (target < 0 || target >= draft.order.length) return;
-  const temp = draft.order[index];
-  draft.order[index] = draft.order[target];
-  draft.order[target] = temp;
-  routine[activeDay].exercises = [...draft.order];
-  saveJSON(STORAGE_KEYS.ROUTINE, routine);
-  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
-  renderWorkout();
+  [draft.order[index], draft.order[target]] = [draft.order[target], draft.order[index]];
+  routine[activeDay].exercises = [...draft.order]; saveJSON(STORAGE_KEYS.ROUTINE, routine); saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts); renderWorkout();
 }
-
 function removeExerciseFromDay(exId) {
-  const draft = ensureDayDraft(activeDay);
-  draft.order = draft.order.filter(id => id !== exId);
-  routine[activeDay].exercises = [...draft.order];
-  saveJSON(STORAGE_KEYS.ROUTINE, routine);
-  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
-  renderWorkout();
+  const draft = ensureDayDraft(activeDay); draft.order = draft.order.filter(id => id !== exId);
+  routine[activeDay].exercises = [...draft.order]; saveJSON(STORAGE_KEYS.ROUTINE, routine); saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts); renderWorkout();
 }
-
 function resetDayOrder() {
   const baseIds = (DEFAULT_ROUTINE[activeDay] && DEFAULT_ROUTINE[activeDay].exercises) ? DEFAULT_ROUTINE[activeDay].exercises : [];
-  routine[activeDay].exercises = [...baseIds];
-  drafts[activeDay].order = [...baseIds];
-  saveJSON(STORAGE_KEYS.ROUTINE, routine);
-  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
-  renderWorkout();
+  routine[activeDay].exercises = [...baseIds]; drafts[activeDay].order = [...baseIds];
+  saveJSON(STORAGE_KEYS.ROUTINE, routine); saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts); renderWorkout();
 }
-
 function saveWorkoutSession() {
   const draft = ensureDayDraft(activeDay);
-  const exercisesSnapshot = draft.order.map(exId => {
-    const ex = getExerciseById(exId);
-    return {
-      exerciseId: exId,
-      name: ex.name,
-      group: ex.group,
-      sets: (draft.setsByEx[exId] || []).map(s => ({
-        weight: s.weight,
-        reps: s.reps,
-        done: Boolean(s.done)
-      }))
-    };
+  historyData.push({
+    id: "sess_" + Date.now(), date: new Date().toISOString(), dayNumber: activeDay,
+    dayName: routine[activeDay] ? routine[activeDay].name : `Día ${activeDay}`, durationSec: sessionSeconds,
+    exercises: draft.order.map(exId => {
+      const ex = getExerciseById(exId);
+      return { exerciseId: exId, name: ex.name, group: ex.group, sets: (draft.setsByEx[exId] || []).map(s => ({ weight: s.weight, reps: s.reps, done: Boolean(s.done) })) };
+    })
   });
-
-  const entry = {
-    id: "sess_" + Date.now(),
-    date: new Date().toISOString(),
-    dayNumber: activeDay,
-    dayName: routine[activeDay] ? routine[activeDay].name : `Día ${activeDay}`,
-    durationSec: sessionSeconds,
-    exercises: exercisesSnapshot
-  };
-
-  historyData.push(entry);
   saveJSON(STORAGE_KEYS.HISTORY, historyData);
   alert("Sesión guardada. Las series quedan disponibles como referencia para la próxima vez.");
 }
 
-// Base de datos y modal para añadir ejercicios
-function openCatalogModal() {
-  document.getElementById("modalSearchInput").value = "";
-  document.getElementById("modalGroupFilter").value = "ALL";
-  renderModalCatalog();
-  document.getElementById("catalogModal").classList.add("open");
-}
-
-function closeCatalogModal() {
-  document.getElementById("catalogModal").classList.remove("open");
-}
-
-function closeCatalogModalOnBackdrop(e) {
-  if (e.target.id === "catalogModal") closeCatalogModal();
-}
+function openCatalogModal() { document.getElementById("modalSearchInput").value = ""; document.getElementById("modalGroupFilter").value = "ALL"; renderModalCatalog(); document.getElementById("catalogModal").classList.add("open"); }
+function closeCatalogModal() { document.getElementById("catalogModal").classList.remove("open"); }
+function closeCatalogModalOnBackdrop(e) { if (e.target.id === "catalogModal") closeCatalogModal(); }
 
 function renderModalCatalog() {
   const q = (document.getElementById("modalSearchInput").value || "").toLowerCase().trim();
   const grp = document.getElementById("modalGroupFilter").value;
-  const list = document.getElementById("modalCatalogList");
-  list.innerHTML = "";
-
-  const filtered = catalog.filter(item => {
-    const matchesGroup = grp === "ALL" || item.group === grp;
-    const matchesText = !q || item.name.toLowerCase().includes(q) || (item.equip || "").toLowerCase().includes(q);
-    return matchesGroup && matchesText;
-  });
-
-  filtered.forEach(item => {
-    const row = document.createElement("div");
-    row.className = "catalog-item";
-    row.innerHTML = `
-      <div>
-        <div style="font-weight:700; font-size:0.9rem;">${escapeHtml(item.name)}</div>
-        <div class="muted">${escapeHtml(item.group)}${item.equip ? " · " + escapeHtml(item.equip) : ""}</div>
-      </div>
-      <button class="btn-sm btn-accent" onclick="addExerciseToActiveDay('${item.id}')">+ Añadir</button>
-    `;
+  const list = document.getElementById("modalCatalogList"); list.innerHTML = "";
+  catalog.filter(item => (grp === "ALL" || item.group === grp) && (!q || item.name.toLowerCase().includes(q) || (item.equip || "").toLowerCase().includes(q))).forEach(item => {
+    const row = document.createElement("div"); row.className = "catalog-item";
+    row.innerHTML = `<div><div style="font-weight:700; font-size:0.9rem;">${escapeHtml(item.name)}</div><div class="muted">${escapeHtml(item.group)}${item.equip ? " · " + escapeHtml(item.equip) : ""}</div></div><button class="btn-sm btn-accent" onclick="addExerciseToActiveDay('${item.id}')">+ Añadir</button>`;
     list.appendChild(row);
   });
 }
 
 function addExerciseToActiveDay(exId) {
-  const draft = ensureDayDraft(activeDay);
-  draft.order.push(exId);
-  const prev = getLastSetsForExercise(exId);
-  const count = prev ? prev.length : 3;
+  const draft = ensureDayDraft(activeDay); draft.order.push(exId);
+  const prev = getLastSetsForExercise(exId); const count = prev ? prev.length : 3;
   draft.setsByEx[exId] = Array.from({ length: count }, () => ({ weight: "", reps: "", done: false }));
-  routine[activeDay].exercises = [...draft.order];
-  saveJSON(STORAGE_KEYS.ROUTINE, routine);
-  saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
-  closeCatalogModal();
-  renderWorkout();
+  routine[activeDay].exercises = [...draft.order]; saveJSON(STORAGE_KEYS.ROUTINE, routine); saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
+  closeCatalogModal(); renderWorkout();
 }
 
 function createCustomExercise() {
-  const nameInput = document.getElementById("newExName");
-  const groupSelect = document.getElementById("newExGroup");
-  const equipInput = document.getElementById("newExEquip");
-
-  const name = (nameInput.value || "").trim();
-  if (!name) return;
-
-  const newItem = {
-    id: "custom_" + Date.now(),
-    name,
-    group: groupSelect.value,
-    equip: (equipInput.value || "").trim(),
-    restSec: 90
-  };
-
-  catalog.unshift(newItem);
-  saveJSON(STORAGE_KEYS.CATALOG, catalog);
-  nameInput.value = "";
-  equipInput.value = "";
-  renderDatabaseTab();
+  const nameInput = document.getElementById("newExName"), groupSelect = document.getElementById("newExGroup"), equipInput = document.getElementById("newExEquip");
+  const name = (nameInput.value || "").trim(); if (!name) return;
+  catalog.unshift({ id: "custom_" + Date.now(), name, group: groupSelect.value, equip: (equipInput.value || "").trim(), restSec: 90 });
+  saveJSON(STORAGE_KEYS.CATALOG, catalog); nameInput.value = ""; equipInput.value = ""; renderDatabaseTab();
 }
 
 function renderDatabaseTab() {
   const q = (document.getElementById("dbSearchInput").value || "").toLowerCase().trim();
   const grp = document.getElementById("dbGroupFilter").value;
-  const list = document.getElementById("databaseList");
-  list.innerHTML = "";
-
-  const filtered = catalog.filter(item => {
-    const matchesGroup = grp === "ALL" || item.group === grp;
-    const matchesText = !q || item.name.toLowerCase().includes(q) || (item.equip || "").toLowerCase().includes(q);
-    return matchesGroup && matchesText;
-  });
-
-  filtered.forEach(item => {
+  const list = document.getElementById("databaseList"); list.innerHTML = "";
+  catalog.filter(item => (grp === "ALL" || item.group === grp) && (!q || item.name.toLowerCase().includes(q) || (item.equip || "").toLowerCase().includes(q))).forEach(item => {
     const lastSets = getLastSetsForExercise(item.id);
-    const lastSummary = lastSets
-      ? lastSets.map((s, i) => `S${i + 1}: ${s.weight || 0}kg×${s.reps || 0}`).join(" · ")
-      : "Sin registros previos";
-
-    const row = document.createElement("div");
-    row.className = "catalog-item";
-    row.innerHTML = `
-      <div>
-        <div style="font-weight:700; font-size:0.9rem;">${escapeHtml(item.name)}</div>
-        <div class="muted">${escapeHtml(item.group)}${item.equip ? " · " + escapeHtml(item.equip) : ""}</div>
-        <div class="muted" style="margin-top:2px;">Última: ${escapeHtml(lastSummary)}</div>
-      </div>
-      <div class="row-gap" style="gap:4px; flex-shrink:0;">
-        <button class="btn-sm" onclick="openEditExerciseModal('${item.id}')" title="Editar">✎</button>
-        <button class="btn-sm" onclick="switchTab('workout'); addExerciseToActiveDay('${item.id}')">A hoy</button>
-      </div>
-    `;
+    const lastSummary = lastSets ? lastSets.map((s, i) => `S${i + 1}: ${s.weight || 0}kg×${s.reps || 0}`).join(" · ") : "Sin registros previos";
+    const row = document.createElement("div"); row.className = "catalog-item";
+    row.innerHTML = `<div><div style="font-weight:700; font-size:0.9rem;">${escapeHtml(item.name)}</div><div class="muted">${escapeHtml(item.group)}${item.equip ? " · " + escapeHtml(item.equip) : ""}</div><div class="muted" style="margin-top:2px;">Última: ${escapeHtml(lastSummary)}</div></div>
+      <div class="row-gap" style="gap:4px; flex-shrink:0;"><button class="btn-sm" onclick="openEditExerciseModal('${item.id}')" title="Editar">✎</button><button class="btn-sm" onclick="switchTab('workout'); addExerciseToActiveDay('${item.id}')">A hoy</button></div>`;
     list.appendChild(row);
   });
 }
 
 function renderHistoryTab() {
-  const list = document.getElementById("historyList");
-  list.innerHTML = "";
-  if (historyData.length === 0) {
-    list.innerHTML = `<div class="card"><div class="muted">Todavía no hay sesiones guardadas.</div></div>`;
-    return;
-  }
-
+  const list = document.getElementById("historyList"); list.innerHTML = "";
+  if (historyData.length === 0) { list.innerHTML = `<div class="card"><div class="muted">Todavía no hay sesiones guardadas.</div></div>`; return; }
   [...historyData].reverse().forEach(sess => {
     const dt = new Date(sess.date);
     const fechaStr = dt.toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
@@ -1221,93 +626,46 @@ function renderHistoryTab() {
       const setsStr = (e.sets || []).map(s => `${s.weight || 0}kg×${s.reps || 0}`).join(", ");
       return `<div class="muted">• <strong>${escapeHtml(displayName)}</strong>: ${escapeHtml(setsStr)}</div>`;
     }).join("");
-
-    const box = document.createElement("div");
-    box.className = "history-item";
-    box.innerHTML = `
-      <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:4px;">
-        <span>${escapeHtml(sess.dayName)}</span>
-        <span class="muted">${fechaStr} · ${formatTime(sess.durationSec || 0)}</span>
-      </div>
-      ${exSummary}
-    `;
+    const box = document.createElement("div"); box.className = "history-item";
+    box.innerHTML = `<div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:4px;"><span>${escapeHtml(sess.dayName)}</span><span class="muted">${fechaStr} · ${formatTime(sess.durationSec || 0)}</span></div>${exSummary}`;
     list.appendChild(box);
   });
 }
 
 function exportBackupJSON() {
-  const payload = {
-    version: "3.2",
-    exportedAt: new Date().toISOString(),
-    catalog,
-    routine,
-    history: historyData,
-    drafts
-  };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `ironlog-v3.2-backup-${new Date().toISOString().slice(0, 10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  const blob = new Blob([JSON.stringify({ version: "3.2", exportedAt: new Date().toISOString(), catalog, routine, history: historyData, drafts }, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob); const a = document.createElement("a");
+  a.href = url; a.download = `ironlog-v3.2-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click(); URL.revokeObjectURL(url);
 }
 
 function importBackupJSON(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+  const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
     try {
       const data = JSON.parse(reader.result);
-      if (Array.isArray(data.catalog)) {
-        catalog = data.catalog;
-        saveJSON(STORAGE_KEYS.CATALOG, catalog);
-      }
-      if (data.routine && typeof data.routine === "object") {
-        routine = data.routine;
-        saveJSON(STORAGE_KEYS.ROUTINE, routine);
-      }
-      if (Array.isArray(data.history)) {
-        historyData = data.history;
-        saveJSON(STORAGE_KEYS.HISTORY, historyData);
-      }
-      if (data.drafts && typeof data.drafts === "object") {
-        drafts = data.drafts;
-        saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts);
-      }
-      renderWorkout();
-      renderDatabaseTab();
-      renderHistoryTab();
-      alert("Copia importada correctamente.");
-    } catch (err) {
-      alert("El archivo JSON no es válido.");
-    }
+      if (Array.isArray(data.catalog)) { catalog = data.catalog; saveJSON(STORAGE_KEYS.CATALOG, catalog); }
+      if (data.routine && typeof data.routine === "object") { routine = data.routine; saveJSON(STORAGE_KEYS.ROUTINE, routine); }
+      if (Array.isArray(data.history)) { historyData = data.history; saveJSON(STORAGE_KEYS.HISTORY, historyData); }
+      if (data.drafts && typeof data.drafts === "object") { drafts = data.drafts; saveJSON(STORAGE_KEYS.ACTIVE_DRAFT, drafts); }
+      renderWorkout(); renderDatabaseTab(); renderHistoryTab(); alert("Copia importada correctamente.");
+    } catch (err) { alert("El archivo JSON no es válido."); }
   };
   reader.readAsText(file);
 }
 
 function switchTab(tab) {
-  document.getElementById("viewWorkout").classList.toggle("hidden", tab !== "workout");
-  document.getElementById("viewCatalog").classList.toggle("hidden", tab !== "catalog");
-  document.getElementById("viewHistory").classList.toggle("hidden", tab !== "history");
-  document.getElementById("viewBackup").classList.toggle("hidden", tab !== "backup");
-
-  document.getElementById("navWorkout").classList.toggle("active", tab === "workout");
-  document.getElementById("navCatalog").classList.toggle("active", tab === "catalog");
-  document.getElementById("navHistory").classList.toggle("active", tab === "history");
-  document.getElementById("navBackup").classList.toggle("active", tab === "backup");
-
+  ["workout", "catalog", "history", "backup"].forEach(t => {
+    document.getElementById("view" + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle("hidden", tab !== t);
+    document.getElementById("nav" + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle("active", tab === t);
+  });
   if (tab === "catalog") renderDatabaseTab();
   if (tab === "history") renderHistoryTab();
 }
 
 function escapeHtml(str) {
-  return String(str || "")
-    .replace(/&/g, "&")
-    .replace(/</g, "<")
-    .replace(/>/g, ">")
-    .replace(/"/g, """);
+  return String(str || "").replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, """);
 }
 
 updateSessionTimerUI();
